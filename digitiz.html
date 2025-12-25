@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Sake Council Tokyo｜数値化（KPI/KGI）設計一覧</title>
+  <style>
+    :root{
+      --bg:#0b0d12;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.08);
+      --line: rgba(255,255,255,.12);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --accent:#d7b56d;
+      --blue:#86d4ff;
+      --green:#7ee3a6;
+      --yellow:#ffcf6b;
+      --red:#ff7a7a;
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --r:18px;
+      --r2:14px;
+      --pad:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", "Segoe UI", sans-serif;
+      background: radial-gradient(1200px 700px at 15% 10%, rgba(215,181,109,.18), transparent 60%),
+                  radial-gradient(1000px 600px at 90% 20%, rgba(126,227,166,.10), transparent 55%),
+                  radial-gradient(900px 500px at 50% 110%, rgba(134,212,255,.12), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.6;
+    }
+    .wrap{max-width:1220px; margin:0 auto; padding:26px 18px 46px}
+    header{
+      display:flex; gap:14px; justify-content:space-between; flex-wrap:wrap;
+      align-items:flex-start; margin-bottom:14px;
+    }
+    .brand{display:flex; align-items:center; gap:10px; color:var(--muted); font-size:13px; letter-spacing:.04em;}
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: linear-gradient(180deg, var(--accent), rgba(215,181,109,.35));
+      box-shadow: 0 0 0 5px rgba(215,181,109,.12);
+    }
+    h1{margin:0; font-size:clamp(22px,2.4vw,32px)}
+    .sub{margin:6px 0 0; color:var(--muted); font-size:14px; max-width:820px}
+    .meta{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+    .badge{
+      font-size:12px; padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.82);
+      backdrop-filter: blur(10px);
+    }
+
+    .layout{display:grid; grid-template-columns: 340px 1fr; gap:14px; align-items:start;}
+    @media (max-width: 980px){ .layout{grid-template-columns:1fr} }
+
+    .card{
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:var(--pad);
+      backdrop-filter: blur(12px);
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-2px -2px auto auto;
+      width:240px; height:240px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.09), transparent 62%);
+      transform: translate(30%,-30%);
+      pointer-events:none;
+    }
+
+    /* nav */
+    .nav h2{margin:0 0 10px; font-size:14px; color:rgba(255,255,255,.88)}
+    .nav a{
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+      color:rgba(255,255,255,.86);
+      margin:8px 0;
+      text-decoration:none;
+    }
+    .nav a:hover{border-color: rgba(215,181,109,.25); background: rgba(215,181,109,.10);}
+    .count{
+      font-size:11px;
+      padding:3px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.78);
+      flex:0 0 auto;
+    }
+
+    .legend{
+      margin-top:12px;
+      padding:12px;
+      border-radius:14px;
+      border:1px dashed rgba(255,255,255,.16);
+      color:rgba(255,255,255,.74);
+      font-size:12px;
+    }
+    .pillrow{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+    .pill{
+      font-size:11px;
+      padding:6px 9px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.80);
+      white-space:nowrap;
+    }
+    .p-kgi{border-color:rgba(215,181,109,.30); background:rgba(215,181,109,.12)}
+    .p-kpi{border-color:rgba(126,227,166,.30); background:rgba(126,227,166,.10)}
+    .p-ops{border-color:rgba(134,212,255,.30); background:rgba(134,212,255,.10)}
+    .p-risk{border-color:rgba(255,122,122,.30); background:rgba(255,122,122,.10)}
+
+    /* content */
+    section{scroll-margin-top: 12px;}
+    .sectionTitle{
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      margin:0 0 10px;
+    }
+    .sectionTitle h2{margin:0; font-size:18px}
+    .lead{margin:0 0 12px; color:rgba(255,255,255,.78); font-size:13px}
+
+    details{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      border-radius: var(--r2);
+      padding: 12px 12px 10px;
+      margin:10px 0;
+      overflow:hidden;
+    }
+    summary{
+      cursor:pointer;
+      list-style:none;
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+      font-weight:760;
+      color:rgba(255,255,255,.92);
+    }
+    summary::-webkit-details-marker{display:none}
+    .tags{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+    .tag{
+      font-size:11px; font-weight:650;
+      padding:4px 8px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.78);
+    }
+    .t-kgi{border-color:rgba(215,181,109,.30); background:rgba(215,181,109,.12)}
+    .t-kpi{border-color:rgba(126,227,166,.30); background:rgba(126,227,166,.10)}
+    .t-ops{border-color:rgba(134,212,255,.30); background:rgba(134,212,255,.10)}
+    .t-risk{border-color:rgba(255,122,122,.30); background:rgba(255,122,122,.10)}
+
+    .box{
+      margin-top:10px;
+      border-top:1px dashed rgba(255,255,255,.14);
+      padding-top:10px;
+      color:rgba(255,255,255,.84);
+      font-size:13px;
+    }
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 980px){ .grid2{grid-template-columns:1fr} }
+
+    .callout{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      border-radius:14px;
+      padding:12px;
+    }
+    .callout h3{margin:0 0 8px; font-size:13px}
+    ul{margin:8px 0 0; padding-left:18px}
+    li{margin:6px 0}
+    code{font-family:var(--mono); font-size:12px; color:rgba(255,255,255,.86)}
+    .small{font-size:12px; color:rgba(255,255,255,.76)}
+    .hr{height:1px; background:rgba(255,255,255,.12); margin:14px 0}
+
+    table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:14px; border:1px solid rgba(255,255,255,.12); margin-top:10px}
+    th,td{padding:10px 10px; text-align:left; font-size:13px; vertical-align:top}
+    th{background:rgba(255,255,255,.08); color:rgba(255,255,255,.86); border-bottom:1px solid rgba(255,255,255,.12)}
+    td{background:rgba(0,0,0,.14); color:rgba(255,255,255,.82); border-bottom:1px solid rgba(255,255,255,.08)}
+    tr:last-child td{border-bottom:none}
+
+    .placeholder{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px dashed rgba(255,255,255,.22);
+      color:rgba(255,255,255,.70);
+      font-family:var(--mono);
+      font-size:11px;
+      background: rgba(0,0,0,.14);
+    }
+
+    .formula{
+      font-family:var(--mono);
+      font-size:12px;
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:12px;
+      padding:10px;
+      color:rgba(255,255,255,.86);
+      overflow:auto;
+      margin-top:10px;
+    }
+
+    footer{
+      margin-top:16px;
+      color:rgba(255,255,255,.60);
+      font-size:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    @media print{
+      body{background:#fff; color:#111}
+      .card, details{box-shadow:none !important; background:#fff !important; border-color:#ddd !important}
+      .badge,.pill,.tag{background:#f7f7f7 !important; border-color:#ddd !important; color:#333 !important}
+      table{border-color:#ddd}
+      th{background:#f3f3f3; color:#111}
+      td{background:#fff; color:#111}
+      .placeholder{border-color:#aaa; color:#333}
+      .formula{background:#fafafa; color:#111; border-color:#ddd}
+      a{color:#111}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <div class="brand"><span class="dot"></span> The Sake Council Tokyo</div>
+        <h1>数値化（KPI/KGI）設計一覧</h1>
+        <p class="sub">
+          下記の業務群から<strong>「数値で管理できる項目」</strong>を抽出し、<strong>何をどう測り、どう使うか</strong>まで具体化した一覧です。<br>
+          （目標値はオーナー合意が必要なため <span class="placeholder">__</span> を残しています）
+        </p>
+      </div>
+      <div class="meta">
+        <span class="badge">Version: 0.1</span>
+        <span class="badge">Updated: 2025-12-24</span>
+        <span class="badge">Scope: KPI / KGI</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside class="card nav">
+        <h2>数値化対象（目次）</h2>
+        <a href="#revenue">売上・利益（KGI） <span class="count">6</span></a>
+        <a href="#cost">コスト（原価・労務・経費） <span class="count">8</span></a>
+        <a href="#ops">オペレーション（店舗運営） <span class="count">7</span></a>
+        <a href="#inventory">在庫・廃棄 <span class="count">7</span></a>
+        <a href="#menu">メニュー（商品力） <span class="count">6</span></a>
+        <a href="#staff">スタッフ（教育・評価） <span class="count">8</span></a>
+        <a href="#customer">顧客（満足・クレーム） <span class="count">7</span></a>
+        <a href="#promo">マーケ/プロモ <span class="count">6</span></a>
+        <a href="#opening">オープニング進捗 <span class="count">5</span></a>
+
+        <div class="legend">
+          <strong>タグの意味</strong>
+          <div class="pillrow">
+            <span class="pill p-kgi">KGI：最終目標</span>
+            <span class="pill p-kpi">KPI：行動・中間指標</span>
+            <span class="pill p-ops">OPS：運用指標</span>
+            <span class="pill p-risk">RISK：事故/損失防止</span>
+          </div>
+          <div class="hr"></div>
+          <div class="small">
+            目安：KGIは週次・月次、KPI/OPSは日次・週次で回すと機能しやすいです。
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <main>
+        <!-- Revenue -->
+        <section id="revenue" class="card">
+          <div class="sectionTitle">
+            <h2>売上・利益（KGI）</h2>
+            <span class="pill">店の成果を数字で固定</span>
+          </div>
+          <p class="lead">売上管理・財務（売上利益分析）から数値化。キャッシュレスならデータ取得が容易。</p>
+
+          <details open>
+            <summary>
+              <span>KGI：売上・利益・客数（基本セット）</span>
+              <span class="tags">
+                <span class="tag t-kgi">KGI</span>
+                <span class="tag t-kpi">KPI</span>
+              </span>
+            </summary>
+            <div class="box">
+              <table>
+                <thead>
+                  <tr><th>指標</th><th>定義（どう測る）</th><th>頻度</th><th>目標（例）</th><th>使い方</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>売上（Gross Sales）</td><td>決済データ合計</td><td>日/週/月</td><td><span class="placeholder">__円/日</span></td><td>前年同週比、施策前後比較</td></tr>
+                  <tr><td>客数</td><td>会計件数 or 来店記録</td><td>日/週</td><td><span class="placeholder">__人/日</span></td><td>曜日別の谷を埋める</td></tr>
+                  <tr><td>客単価（APC）</td><td>売上 ÷ 客数</td><td>日/週</td><td><span class="placeholder">__円</span></td><td>提案・セット販売の効果確認</td></tr>
+                  <tr><td>粗利（粗利益）</td><td>売上 − 原価（食材/酒）</td><td>週/月</td><td><span class="placeholder">__円</span></td><td>利益構造の把握</td></tr>
+                  <tr><td>営業利益（簡易）</td><td>売上 −（原価＋人件費＋経費）</td><td>週/月</td><td><span class="placeholder">__円</span></td><td>固定費耐性、投資判断</td></tr>
+                  <tr><td>予算達成率</td><td>実績 ÷ 予算</td><td>週/月</td><td><span class="placeholder">100%</span></td><td>月中で手当て（イベント/販促）</td></tr>
+                </tbody>
+              </table>
+              <div class="formula">
+                APC（客単価） = 売上 ÷ 客数<br>
+                粗利 = 売上 − 原価<br>
+                営業利益（簡易） = 売上 −（原価＋人件費＋経費）
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <!-- Cost -->
+        <section id="cost" class="card" style="margin-top:14px;">
+          <div class="sectionTitle">
+            <h2>コスト（原価・労務・経費）</h2>
+            <span class="pill">利益を守る“管理指標”</span>
+          </div>
+          <p class="lead">コスト管理・財務経理から数値化。目標レンジはオーナー合意で確定。</p>
+
+          <details open>
+            <summary>
+              <span>KPI：原価率・人件費率・経費率（利益の三本柱）</span>
+              <span class="tags"><span class="tag t-kpi">KPI</span><span class="tag t-risk">RISK</span></span>
+            </summary>
+            <div class="box">
+              <table>
+                <thead>
+                  <tr><th>指標</th><th>定義</th><th>頻度</th><th>目標レンジ（例）</th><th>打ち手</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>原価率</td><td>原価 ÷ 売上</td><td>週/月</td><td><span class="placeholder">__〜__%</span></td><td>値付け／仕入単価／ロス削減</td></tr>
+                  <tr><td>ドリンク原価率</td><td>酒原価 ÷ 酒売上</td><td>週/月</td><td><span class="placeholder">__〜__%</span></td><td>注ぎ量統一／高粗利提案</td></tr>
+                  <tr><td>フード原価率</td><td>食材原価 ÷ フード売上</td><td>週/月</td><td><span class="placeholder">__〜__%</span></td><td>ポーション／仕込み工程見直し</td></tr>
+                  <tr><td>人件費率</td><td>人件費 ÷ 売上</td><td>日/週</td><td><span class="placeholder">__〜__%</span></td><td>シフト最適化／業務分担</td></tr>
+                  <tr><td>経費率</td><td>経費 ÷ 売上</td><td>月</td><td><span class="placeholder">__〜__%</span></td><td>サブスク見直し／消耗品最適化</td></tr>
+                  <tr><td>廃棄ロス率</td><td>廃棄額 ÷ 原価</td><td>週/月</td><td><span class="placeholder">__%</span></td><td>発注基準／メニュー連動で消化</td></tr>
+                  <tr><td>発注差異</td><td>予定発注 − 実発注</td><td>週</td><td><span class="placeholder">±__円</span></td><td>予測精度改善</td></tr>
+                  <tr><td>支払い遅延件数</td><td>期日超過の件数</td><td>月</td><td><span class="placeholder">0</span></td><td>支払カレンダー徹底</td></tr>
+                </tbody>
+              </table>
+
+              <div class="formula">
+                原価率 = 原価 ÷ 売上<br>
+                人件費率 = 人件費 ÷ 売上<br>
+                廃棄ロス率 = 廃棄額 ÷ 原価
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <!-- Ops -->
+        <section id="ops" class="card" style="margin-top:14px;">
+          <div class="sectionTitle">
+            <h2>オペレーション（店舗運営）</h2>
+            <span class="pill">現場を“見える化”</span>
+          </div>
+          <p class="lead">日々の店舗運営・衛生・施設管理から「遅延・品質・事故リスク」を数字で追う。</p>
+
+          <details open>
+            <summary>
+              <span>OPS：提供・回転・品質（現場の強さ）</span>
+              <span class="tags"><span class="tag t-ops">OPS</span><span class="tag t-kpi">KPI</span></span>
+            </summary>
+            <div class="box">
+              <table>
+                <thead>
+                  <tr><th>指標</th><th>定義（どう測る）</th><th>頻度</th><th>目標（例）</th><th>改善アクション</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>提供時間（平均）</td><td>注文→提供の平均分</td><td>日/週</td><td><span class="placeholder">__分以内</span></td><td>導線/仕込み/同時調理</td></tr>
+                  <tr><td>提供遅延率</td><td><span class="placeholder">X分超</span> の件数 ÷ 全注文</td><td>日/週</td><td><span class="placeholder">__%</span></td><td>ボトルネック特定</td></tr>
+                  <tr><td>席回転率</td><td>来客数 ÷ 席数（or 予約枠）</td><td>日/週</td><td><span class="placeholder">__回</span></td><td>滞在設計/予約枠改善</td></tr>
+                  <tr><td>キャンセル率</td><td>キャンセル数 ÷ 予約数</td><td>週/月</td><td><span class="placeholder">__%</span></td><td>前日確認/キャンセルポリシー</td></tr>
+                  <tr><td>再提供（作り直し）件数</td><td>作り直し回数</td><td>週</td><td><span class="placeholder">__件</span></td><td>ミス分類→再発防止</td></tr>
+                  <tr><td>ヒヤリハット件数</td><td>事故未遂の報告数</td><td>週</td><td><span class="placeholder">記録100%</span></td><td>報告文化→仕組み改善</td></tr>
+                  <tr><td>設備トラブル件数</td><td>故障・停止の件数</td><td>月</td><td><span class="placeholder">__件以内</span></td><td>予防保全/点検</td></tr>
+                </tbody>
+              </table>
+              <div class="small">※ヒヤリハットは「件数が多い＝悪」ではなく、報告が上がるほど改善材料が増える指標です。</div>
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              <span>RISK：衛生（HACCP運用の“証拠”）</span>
+              <span class="tags"><span class="tag t-risk">RISK</span><span class="tag t-ops">OPS</span></span>
+            </summary>
+            <div class="box">
+              <table>
+                <thead>
+                  <tr><th>指標</th><th>定義</th><th>頻度</th><th>目標</th><th>備考</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>温度チェック実施率</td><td>実施回数 ÷ 必要回数</td><td>日</td><td><span class="placeholder">100%</span></td><td>冷蔵/冷凍の記録</td></tr>
+                  <tr><td>清掃チェック実施率</td><td>実施 ÷ 予定</td><td>日/週</td><td><span class="placeholder">100%</span></td><td>トイレ/厨房/排水口</td></tr>
+                  <tr><td>衛生不備件数</td><td>是正が必要な指摘数</td><td>週</td><td><span class="placeholder">0</span></td><td>是正ログ残す</td></tr>
+                </tbody>
+              </table>
+              <div class="small">
+                HACCP参照：<a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/shokuhin/haccp/index.html" target="_blank" rel="noreferrer">厚生労働省</a>
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <!-- Inventory -->
+        <section id="inventory" class="card" style="margin-top:14px;">
+          <div class="sectionTitle">
+            <h2>在庫・廃棄</h2>
+            <span class="pill">欠品とロスを数字で潰す</span>
+          </div>
+          <p class="lead">在庫管理から数値化。廃棄は「金額」「理由」「上位品目」で見える化すると効く。</p>
+
+          <details open>
+            <summary>
+              <span>KPI：欠品・過剰在庫・廃棄（在庫の健康診断）</span>
+              <span class="tags"><span class="tag t-kpi">KPI</span><span class="tag t-risk">RISK</span></span>
+            </summary>
+            <div class="box">
+              <table>
+                <thead>
+                  <tr><th>指標</th><th>定義</th><th>頻度</th><th>目標（例）</th><th>改善アクション</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>欠品件数</td><td>提供不可の回数</td><td>週</td><td><span class="placeholder">0〜__件</span></td><td>発注基準/安全在庫見直し</td></tr>
+                  <tr><td>欠品による機会損失</td><td>欠品メニュー売上見込の合計</td><td>月</td><td><span class="placeholder">__円</span></td><td>重点SKUの在庫厚め</td></tr>
+                  <tr><td>在庫回転日数</td><td>在庫額 ÷ 1日原価</td><td>週/月</td><td><span class="placeholder">__日</span></td><td>死に筋の削減</td></tr>
+                  <tr><td>廃棄額</td><td>廃棄した仕入額合計</td><td>週/月</td><td><span class="placeholder">__円</span></td><td>発注頻度/量の調整</td></tr>
+                  <tr><td>廃棄理由トップ</td><td>理由別の件数/金額</td><td>月</td><td><span class="placeholder">把握</span></td><td>原因別に手当て</td></tr>
+                  <tr><td>期限切れ予兆件数</td><td>期限3日前の在庫数</td><td>週</td><td><span class="placeholder">__件以内</span></td><td>おすすめ提示で消化</td></tr>
+                  <tr><td>棚卸差異</td><td>理論在庫 − 実在庫</td><td>月</td><td><span class="placeholder">±__円</span></td><td>ロス/入力ミス特定</td></tr>
+                </tbody>
+              </table>
+              <div class="formula">
+                在庫回転日数 = 在庫額 ÷（原価/日）<br>
+                機会損失（簡易） = 欠品回数 × 平均注文単価（or 推定売上）
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <!-- Menu -->
+        <section id="menu" class="card" style="margin-top:14px;">
+          <div class="sectionTitle">
+            <h2>メニュー（商品力）</h2>
+            <span class="pill">売れる理由を数字に</span>
+          </div>
+          <p class="lead">メニュー管理から数値化。どの商品が利益を作っているか（売上×粗利）を見える化。</p>
+
+          <details open>
+            <summary>
+              <span>KPI：メニュー別の売上・粗利・構成比</span>
+              <span class="tags"><span class="tag t-kpi">KPI</span><span class="tag t-ops">OPS</span></span>
+            </summary>
+            <div class="box">
+              <table>
+                <thead>
+                  <tr><th>指標</th><th>定義</th><th>頻度</th><th>目標（例）</th><th>使い方</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>商品別売上</td><td>商品ごとの売上合計</td><td>週/月</td><td><span class="placeholder">上位10品把握</span></td><td>推し商品を固定</td></tr>
+                  <tr><td>商品別粗利</td><td>売上 − 原価</td><td>週/月</td><td><span class="placeholder">上位10品把握</span></td><td>利益商品を増やす</td></tr>
+                  <tr><td>売上構成比</td><td>カテゴリ売上 ÷ 総売上</td><td>週/月</td><td><span class="placeholder">酒:__% / 食:__%</span></td><td>設計通りか確認</td></tr>
+                  <tr><td>セット率</td><td>ペアリングセット数 ÷ 客数</td><td>日/週</td><td><span class="placeholder">__%</span></td><td>提案の質を測る</td></tr>
+                  <tr><td>おすすめ採用率</td><td>おすすめ品の注文数 ÷ 全注文</td><td>日/週</td><td><span class="placeholder">__%</span></td><td>POP/トーク改善</td></tr>
+                  <tr><td>欠品によるメニュー停止</td><td>停止した品目数</td><td>週</td><td><span class="placeholder">__以下</span></td><td>発注計画の精度</td></tr>
+                </tbody>
+              </table>
+
+              <div class="formula">
+                セット率 = ペアリングセット数 ÷ 客数<br>
+                売上構成比 = カテゴリ売上 ÷ 総売上
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <!-- Staff -->
+        <section id="staff" class="card" style="margin-top:14px;">
+          <div class="sectionTitle">
+            <h2>スタッフ（教育・評価・モチベーション）</h2>
+            <span class="pill">人の成長を数字に</span>
+          </div>
+          <p class="lead">採用・教育・評価・シフトから数値化。公平性や成長が見えると定着率が上がる。</p>
+
+          <details open>
+            <summary>
+              <span>KPI：教育・定着・稼働の“健康指標”</span>
+              <span class="tags"><span class="tag t-kpi">KPI</span><span class="tag t-risk">RISK</span></span>
+            </summary>
+            <div class="box">
+              <table>
+                <thead>
+                  <tr><th>指標</th><th>定義</th><th>頻度</th><th>目標（例）</th><th>使い方</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>研修完了率</td><td>完了者 ÷ 対象者</td><td>週</td><td><span class="placeholder">100%</span></td><td>オープン品質担保</td></tr>
+                  <tr><td>習熟スコア</td><td>チェック項目の達成点</td><td>週</td><td><span class="placeholder">__点</span></td><td>教育の詰まり発見</td></tr>
+                  <tr><td>欠勤率</td><td>欠勤 ÷ 予定シフト</td><td>月</td><td><span class="placeholder">__%</span></td><td>バックアップ設計</td></tr>
+                  <tr><td>離職率</td><td>退職者 ÷ 在籍者</td><td>月/四半期</td><td><span class="placeholder">__%</span></td><td>制度・面談改善</td></tr>
+                  <tr><td>シフト充足率</td><td>必要人数を満たした枠 ÷ 全枠</td><td>週</td><td><span class="placeholder">__%</span></td><td>人員不足の早期検知</td></tr>
+                  <tr><td>稼働偏り（公平性）</td><td>月間稼働時間のばらつき</td><td>月</td><td><span class="placeholder">小さく</span></td><td>不満の芽を潰す</td></tr>
+                  <tr><td>面談実施率</td><td>面談実施 ÷ 対象</td><td>月</td><td><span class="placeholder">100%</span></td><td>モチベ・課題把握</td></tr>
+                  <tr><td>トラブル件数</td><td>内部トラブルログ件数</td><td>月</td><td><span class="placeholder">把握</span></td><td>原因別に制度改善</td></tr>
+                </tbody>
+              </table>
+
+              <div class="formula">
+                稼働偏り（例） = 月間稼働時間の標準偏差 or 最大−最小<br>
+                シフト充足率 = 充足枠数 ÷ 全枠
+              </div>
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              <span>パフォーマンス評価：昇給・賞与に繋げるスコアリング</span>
+              <span class="tags"><span class="tag t-kpi">KPI</span><span class="tag t-ops">OPS</span></span>
+            </summary>
+            <div class="box">
+              <div class="grid2">
+                <div class="callout">
+                  <h3>評価項目（例：配点）</h3>
+                  <ul>
+                    <li>接客品質（30）</li>
+                    <li>オペ速度（20）</li>
+                    <li>衛生遵守（20）</li>
+                    <li>提案力（20）</li>
+                    <li>チーム貢献（10）</li>
+                  </ul>
+                </div>
+                <div class="callout">
+                  <h3>運用ルール（例）</h3>
+                  <ul>
+                    <li>月1回の評価（店長＋料理長）</li>
+                    <li>スコアと具体コメントをセットで渡す</li>
+                    <li>昇給ライン：<span class="placeholder">__点以上</span></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="formula">
+                評価スコア = Σ（各項目スコア × 配点）<br>
+                ※「主観」にならないように、チェック項目を具体行動に落とす（例：復唱率、遅延声がけなど）
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <!-- Customer -->
+        <section id="customer" class="card" style="margin-top:14px;">
+          <div class="sectionTitle">
+            <h2>顧客（満足・クレーム・常連・予約）</h2>
+            <span class="pill">体験を数字で改善</span>
+          </div>
+          <p class="lead">顧客対応・サービス向上から数値化。アンケートは「短いほど」回収率が上がる。</p>
+
+          <details open>
+            <summary>
+              <span>KPI：満足度・クレーム・予約の健全性</span>
+              <span class="tags"><span class="tag t-kpi">KPI</span><span class="tag t-risk">RISK</span></span>
+            </summary>
+            <div class="box">
+              <table>
+                <thead>
+                  <tr><th>指標</th><th>定義</th><th>頻度</th><th>目標（例）</th><th>改善アクション</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>満足度（CS）</td><td>アンケ平均（5段階など）</td><td>週/月</td><td><span class="placeholder">4.5+</span></td><td>低評価理由の潰し込み</td></tr>
+                  <tr><td>NPS</td><td>推奨度（0-10）から算出</td><td>月</td><td><span class="placeholder">__</span></td><td>強み/弱みの抽出</td></tr>
+                  <tr><td>アンケ回収率</td><td>回答数 ÷ 来店数</td><td>週</td><td><span class="placeholder">__%</span></td><td>QR/声がけ/特典</td></tr>
+                  <tr><td>クレーム件数</td><td>ログ件数</td><td>週/月</td><td><span class="placeholder">__件</span></td><td>分類→再発防止</td></tr>
+                  <tr><td>クレーム再発率</td><td>同類クレームの再発割合</td><td>月</td><td><span class="placeholder">__%</span></td><td>マニュアル改訂</td></tr>
+                  <tr><td>リピート率（簡易）</td><td>再来店者 ÷ 全来店者</td><td>月</td><td><span class="placeholder">__%</span></td><td>常連フォロー</td></tr>
+                  <tr><td>予約キャンセル率</td><td>キャンセル ÷ 予約</td><td>月</td><td><span class="placeholder">__%</span></td><td>前日連絡/ポリシー</td></tr>
+                </tbody>
+              </table>
+
+              <div class="formula">
+                NPS = 推奨者（9-10）% − 批判者（0-6）%<br>
+                回収率 = 回答数 ÷ 来店数<br>
+                リピート率（簡易） = 再来店者 ÷ 全来店者
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <!-- Promo -->
+        <section id="promo" class="card" style="margin-top:14px;">
+          <div class="sectionTitle">
+            <h2>マーケ/プロモ（SNS・PR・キャンペーン）</h2>
+            <span class="pill">施策の効き目を数字で判断</span>
+          </div>
+          <p class="lead">SNS運営・PR・プロモ企画から数値化。やった/やらないではなく、効いた/効いてないで判断。</p>
+
+          <details open>
+            <summary>
+              <span>KPI：SNSと来店の相関を取る“最低限セット”</span>
+              <span class="tags"><span class="tag t-kpi">KPI</span><span class="tag t-ops">OPS</span></span>
+            </summary>
+            <div class="box">
+              <table>
+                <thead>
+                  <tr><th>指標</th><th>定義</th><th>頻度</th><th>目標（例）</th><th>使い方</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>投稿数</td><td>週の投稿本数</td><td>週</td><td><span class="placeholder">__本</span></td><td>継続性の担保</td></tr>
+                  <tr><td>リーチ</td><td>到達人数</td><td>週</td><td><span class="placeholder">__</span></td><td>企画の刺さり</td></tr>
+                  <tr><td>保存率</td><td>保存 ÷ リーチ</td><td>週</td><td><span class="placeholder">__%</span></td><td>再訪価値</td></tr>
+                  <tr><td>リンククリック/DM</td><td>問い合わせ数</td><td>週</td><td><span class="placeholder">__件</span></td><td>来店導線の強さ</td></tr>
+                  <tr><td>予約流入（自己申告）</td><td>予約時の流入メモ</td><td>週/月</td><td><span class="placeholder">把握</span></td><td>何が効いたか</td></tr>
+                  <tr><td>キャンペーン反応率</td><td>利用数 ÷ 来店数</td><td>期間</td><td><span class="placeholder">__%</span></td><td>次回施策の判断</td></tr>
+                </tbody>
+              </table>
+
+              <div class="formula">
+                保存率 = 保存数 ÷ リーチ<br>
+                反応率 = キャンペーン利用数 ÷ 来店数
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <!-- Opening -->
+        <section id="opening" class="card" style="margin-top:14px;">
+          <div class="sectionTitle">
+            <h2>オープニング進捗（新店）</h2>
+            <span class="pill">開業準備を“遅れない”</span>
+          </div>
+          <p class="lead">オープニングプラン・研修・設備導入・仕入れ契約などを数値（進捗）で管理。</p>
+
+          <details open>
+            <summary>
+              <span>OPS：準備の進捗・完了率</span>
+              <span class="tags"><span class="tag t-ops">OPS</span><span class="tag t-risk">RISK</span></span>
+            </summary>
+            <div class="box">
+              <table>
+                <thead>
+                  <tr><th>指標</th><th>定義</th><th>頻度</th><th>目標</th><th>備考</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>準備タスク完了率</td><td>完了タスク ÷ 全タスク</td><td>週</td><td><span class="placeholder">100%（開店前）</span></td><td>工程表で管理</td></tr>
+                  <tr><td>研修参加率</td><td>参加 ÷ 対象</td><td>週</td><td><span class="placeholder">100%</span></td><td>品質の土台</td></tr>
+                  <tr><td>ロープレ合格率</td><td>合格 ÷ 受験</td><td>週</td><td><span class="placeholder">__%</span></td><td>不足点を可視化</td></tr>
+                  <tr><td>設備導入完了数</td><td>完了件数</td><td>週</td><td><span class="placeholder">全件</span></td><td>初日停止防止</td></tr>
+                  <tr><td>仕入れ先契約完了</td><td>契約完了 ÷ 必要数</td><td>週</td><td><span class="placeholder">100%</span></td><td>欠品防止</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </section>
+
+        <footer>
+          <div>© The Sake Council Tokyo｜KPI Blueprint</div>
+          <div>Tip：このHTMLは印刷→PDF保存でそのまま提出できます</div>
+        </footer>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

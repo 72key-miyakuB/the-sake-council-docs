@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Sake Council Tokyo｜店長業務 全体俯瞰マップ</title>
+  <style>
+    :root{
+      --bg: #0b0d12;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.08);
+      --line: rgba(255,255,255,.12);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+      --accent: #d7b56d;  /* sake-gold */
+      --accent2:#86d4ff;  /* blue */
+      --ok:#7ee3a6;       /* green */
+      --warn:#ffcf6b;     /* yellow */
+      --danger:#ff7a7a;   /* red */
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --radius: 18px;
+      --radius2: 14px;
+      --pad: 18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", "Segoe UI", sans-serif;
+      background: radial-gradient(1200px 700px at 15% 10%, rgba(215,181,109,.18), transparent 60%),
+                  radial-gradient(1000px 600px at 90% 20%, rgba(134,212,255,.12), transparent 55%),
+                  radial-gradient(900px 500px at 50% 110%, rgba(126,227,166,.10), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    a{ color: var(--accent2); text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+
+    .wrap{ max-width: 1200px; margin: 0 auto; padding: 34px 18px 44px; }
+
+    header{
+      display:flex; gap:16px; align-items:flex-start; justify-content:space-between;
+      flex-wrap:wrap; margin-bottom: 14px;
+    }
+    .titleblock{ display:flex; flex-direction:column; gap:6px; min-width: 280px; }
+    .brand{ display:inline-flex; align-items:center; gap:10px; font-size: 13px; letter-spacing:.04em; color: var(--muted); }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: linear-gradient(180deg, var(--accent), rgba(215,181,109,.35));
+      box-shadow: 0 0 0 5px rgba(215,181,109,.12);
+    }
+    h1{ font-size: clamp(22px, 2.4vw, 32px); margin: 0; letter-spacing: .01em; }
+    .subtitle{ margin: 0; color: var(--muted); font-size: 14px; }
+
+    .badgeRow{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 4px; }
+    .badge{
+      font-size: 12px; padding: 6px 10px; border-radius: 999px;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.10);
+      color: rgba(255,255,255,.82); backdrop-filter: blur(10px);
+    }
+
+    .note{
+      margin: 12px 0 16px;
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      color: rgba(255,255,255,.85);
+      display:flex; gap:12px; align-items:flex-start;
+    }
+    .note strong{ color: rgba(255,255,255,.95); }
+    .note .icon{
+      flex: 0 0 auto;
+      width: 34px; height: 34px;
+      border-radius: 12px;
+      display:grid; place-items:center;
+      background: rgba(215,181,109,.14);
+      border: 1px solid rgba(215,181,109,.22);
+      color: rgba(255,255,255,.92);
+    }
+
+    /* cards */
+    .card{
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: var(--pad);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset: -2px -2px auto auto;
+      width: 220px; height: 220px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.09), transparent 62%);
+      transform: translate(30%, -30%);
+      pointer-events:none;
+    }
+    .card h2{
+      margin: 0 0 10px;
+      font-size: 16px;
+      letter-spacing: .01em;
+      display:flex; align-items:center; gap:10px;
+    }
+    .pill{
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.78);
+    }
+    .mark{
+      width: 18px; height: 18px; border-radius: 6px;
+      border: 1px solid rgba(255,255,255,.18);
+      display:inline-block;
+    }
+    .list{ margin: 0; padding-left: 18px; color: rgba(255,255,255,.80); font-size: 13px; }
+    .list li{ margin: 6px 0; }
+    .hint{
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px dashed rgba(255,255,255,.14);
+      padding-top: 10px;
+    }
+
+    .mini{
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+    }
+    .mini .t{ font-size: 12px; color: rgba(255,255,255,.70); margin-bottom: 4px; }
+    .mini .v{ font-size: 13px; color: rgba(255,255,255,.88); }
+
+    /* layout: top row widgets */
+    .topgrid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+      align-items: stretch;
+      margin-bottom: 14px;
+    }
+
+    /* KPI + decision */
+    .kpiGrid{
+      display:grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .kpi{
+      border-radius: 14px;
+      padding: 10px 10px 9px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      min-height: 70px;
+    }
+    .kpi .k{ font-size: 11px; color: rgba(255,255,255,.72); margin-bottom: 6px; }
+    .kpi .v{ font-size: 14px; color: rgba(255,255,255,.92); font-weight: 650; letter-spacing:.01em; }
+    .kpi .s{ font-size: 11px; color: rgba(255,255,255,.62); margin-top: 6px; }
+
+    .chipRow{ display:flex; gap:8px; flex-wrap:wrap; margin-top: 10px; }
+    .chip{
+      font-size: 11px;
+      padding: 6px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.80);
+    }
+    .chip.owner{ border-color: rgba(255,122,122,.30); background: rgba(255,122,122,.10); }
+    .chip.manager{ border-color: rgba(126,227,166,.26); background: rgba(126,227,166,.10); }
+    .chip.shared{ border-color: rgba(255,207,107,.30); background: rgba(255,207,107,.10); }
+
+    /* Timeline */
+    .timeline{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .tlRow{
+      display:grid;
+      grid-template-columns: 68px 1fr;
+      gap: 10px;
+      align-items:center;
+    }
+    .tlLabel{
+      font-size: 12px;
+      color: rgba(255,255,255,.78);
+      padding: 6px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      text-align:center;
+    }
+    .bar{
+      height: 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      overflow:hidden;
+      position:relative;
+    }
+    .bar > span{
+      display:block;
+      height:100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(215,181,109,.65), rgba(134,212,255,.35));
+      width: 100%;
+    }
+    .bar.t60 > span{ width: 72%; background: linear-gradient(90deg, rgba(255,207,107,.60), rgba(215,181,109,.30)); }
+    .bar.t30 > span{ width: 45%; background: linear-gradient(90deg, rgba(126,227,166,.55), rgba(134,212,255,.20)); }
+
+    /* Map layout */
+    .map{
+      position: relative;
+      display:grid;
+      grid-template-columns: 1fr 1.15fr 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+    .span3{ grid-column: 1 / -1; }
+
+    .center{
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+      min-height: 100%;
+    }
+    .hub{
+      border-radius: 22px;
+      padding: 18px;
+      border: 1px solid rgba(215,181,109,.26);
+      background: linear-gradient(180deg, rgba(215,181,109,.18), rgba(255,255,255,.06));
+      box-shadow: 0 18px 50px rgba(0,0,0,.55);
+    }
+    .hub h2{ font-size: 18px; margin: 0 0 8px; }
+    .hub .big{ font-size: 13px; color: rgba(255,255,255,.86); margin: 0 0 10px; }
+
+    .hub .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+
+    /* color accents */
+    .left h2 .mark{ background: rgba(134,212,255,.22); border-color: rgba(134,212,255,.35); }
+    .right h2 .mark{ background: rgba(126,227,166,.18); border-color: rgba(126,227,166,.30); }
+    .top h2 .mark{ background: rgba(255,207,107,.20); border-color: rgba(255,207,107,.32); }
+    .bottom h2 .mark{ background: rgba(255,122,122,.14); border-color: rgba(255,122,122,.26); }
+    .foundation h2 .mark{ background: rgba(215,181,109,.18); border-color: rgba(215,181,109,.30); }
+
+    footer{
+      margin-top: 18px;
+      color: rgba(255,255,255,.60);
+      font-size: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 1100px){
+      .kpiGrid{ grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 980px){
+      .topgrid{ grid-template-columns: 1fr; }
+      .map{ grid-template-columns: 1fr; }
+      .span3{ grid-column: auto; }
+      .hub .grid2{ grid-template-columns: 1fr; }
+      .kpiGrid{ grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media print{
+      body{ background: #fff; color: #111; }
+      .card, .note, .hub, .mini, .kpi{
+        box-shadow:none !important;
+        background:#fff !important;
+        border-color:#ddd !important;
+      }
+      a{ color:#111; }
+      .badge{ border-color:#ddd; background:#f7f7f7; color:#333; }
+      .note .icon{ background:#f5f0e3; border-color:#e9d8aa; color:#111; }
+      .chip{ border-color:#ddd !important; background:#f7f7f7 !important; color:#333 !important; }
+      .bar{ border-color:#ddd; background:#f7f7f7; }
+      .bar > span{ background:#ddd !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="titleblock">
+        <div class="brand"><span class="dot"></span> The Sake Council Tokyo</div>
+        <h1>店長業務 全体俯瞰マップ（1枚）</h1>
+        <p class="subtitle">オーナー向け：現場責任者（店長）の役割を「守り × 攻め × 成長」で構造化</p>
+        <div class="badgeRow">
+          <span class="badge">属人化しない設計</span>
+          <span class="badge">マニュアル化</span>
+          <span class="badge">自動化／仕組み化</span>
+          <span class="badge">数値化／可視化</span>
+          <span class="badge">PDCA</span>
+        </div>
+      </div>
+      <div class="badgeRow" style="align-content:flex-start; justify-content:flex-end;">
+        <span class="badge">Version: 0.2</span>
+        <span class="badge">Updated: 2025-12-24</span>
+      </div>
+    </header>
+
+    <div class="note">
+      <div class="icon">✦</div>
+      <div>
+        <div><strong>中央が「店長（ハブ）」</strong>、左右が「日常運営（守り）／人と顧客（攻め）」、上下が「立ち上げ・発信（成長エンジン）／改善と戦略（未来）」です。</div>
+        <div style="margin-top:6px; color: rgba(255,255,255,.72);">
+          追加：<strong>週次KPI</strong>／<strong>オーナー決裁ライン</strong>／<strong>オープン90/60/30日前タイムライン</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOP WIDGETS -->
+    <section class="topgrid">
+      <!-- KPI -->
+      <article class="card">
+        <h2><span class="mark" style="background:rgba(134,212,255,.20); border-color:rgba(134,212,255,.32)"></span> 週次KPI（オーナー報告の“見る数字”） <span class="pill">上段</span></h2>
+        <div style="color:rgba(255,255,255,.72); font-size:12px;">
+          ※数値はプレースホルダー。運用開始後に「目標／許容レンジ」を合意して更新。
+        </div>
+
+        <div class="kpiGrid">
+          <div class="kpi">
+            <div class="k">客数（週）</div>
+            <div class="v">—</div>
+            <div class="s">曜日別の偏りも確認</div>
+          </div>
+          <div class="kpi">
+            <div class="k">客単価</div>
+            <div class="v">—</div>
+            <div class="s">セット率／追加率</div>
+          </div>
+          <div class="kpi">
+            <div class="k">売上（週）</div>
+            <div class="v">—</div>
+            <div class="s">前年差／前週比</div>
+          </div>
+          <div class="kpi">
+            <div class="k">原価率</div>
+            <div class="v">—%</div>
+            <div class="s">A品（日本酒等）重点</div>
+          </div>
+          <div class="kpi">
+            <div class="k">人件費率</div>
+            <div class="v">—%</div>
+            <div class="s">シフト適正化</div>
+          </div>
+          <div class="kpi">
+            <div class="k">満足度</div>
+            <div class="v">— / 5</div>
+            <div class="s">アンケート3問</div>
+          </div>
+        </div>
+
+        <div class="hint">
+          報告フォーマット例：<strong>数字 → 事実 → 仮説 → 次の一手（1つ）</strong>
+        </div>
+      </article>
+
+      <!-- Decisions + Timeline -->
+      <article class="card">
+        <h2><span class="mark" style="background:rgba(255,122,122,.14); border-color:rgba(255,122,122,.26)"></span> オーナー決裁ライン／オープン準備タイムライン <span class="pill">上段</span></h2>
+
+        <div class="mini">
+          <div class="t">決裁ライン（誰が決めるかを先に明確化）</div>
+          <div class="chipRow">
+            <span class="chip manager">店長裁量：日々運用／改善</span>
+            <span class="chip shared">共同判断：制度・方針に影響</span>
+            <span class="chip owner">オーナー決裁：投資／ブランド根幹</span>
+          </div>
+          <ul class="list" style="margin-top:10px;">
+            <li><strong>店長裁量</strong>：現場オペ調整／発注・在庫／教育・シフト／軽微な改善</li>
+            <li><strong>共同判断</strong>：価格レンジ・原価/人件費の許容幅／評価制度の運用設計</li>
+            <li><strong>オーナー決裁</strong>：設備投資／メインコンセプト変更／採用条件の大幅変更</li>
+          </ul>
+        </div>
+
+        <div class="mini" style="margin-top:12px;">
+          <div class="t">オープンまで（90 / 60 / 30日前の分解）</div>
+          <div class="timeline">
+            <div class="tlRow">
+              <div class="tlLabel">90日前</div>
+              <div class="bar"><span></span></div>
+            </div>
+            <div class="tlRow">
+              <div class="tlLabel">60日前</div>
+              <div class="bar t60"><span></span></div>
+            </div>
+            <div class="tlRow">
+              <div class="tlLabel">30日前</div>
+              <div class="bar t30"><span></span></div>
+            </div>
+          </div>
+          <ul class="list" style="margin-top:10px;">
+            <li><strong>90日前</strong>：採用確定／仕入れ先・規格決定／基本マニュアル骨格</li>
+            <li><strong>60日前</strong>：導線・席運用確定／研修設計／KPIと許容レンジ合意</li>
+            <li><strong>30日前</strong>：ロープレ反復／衛生・記録運用開始／最終リハ</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <!-- MAIN MAP -->
+    <section class="map">
+      <!-- TOP -->
+      <article class="card top span3">
+        <h2><span class="mark"></span> 立ち上げ・発信（成長エンジン） <span class="pill">上部</span></h2>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="mini">
+            <div class="t">4. オープニング・プロジェクト管理</div>
+            <ul class="list">
+              <li>オープン準備進行（90/60/30日前で分解）</li>
+              <li>オープン前研修／ロープレ／マニュアル整備</li>
+              <li>設備・POS・仕入体制の構築／導線確認</li>
+              <li>オープニングイベント設計（関係者／一般）</li>
+            </ul>
+          </div>
+          <div class="mini">
+            <div class="t">6. マーケティング・PR</div>
+            <ul class="list">
+              <li>SNS運用（効率化・自動化を含む）</li>
+              <li>キャンペーン／告知設計（認知→来店→再来店）</li>
+              <li>メディア／外部連携（必要範囲を定義）</li>
+              <li>効果測定（来店・予約・単価へ接続）</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hint">狙い：<strong>オープン直後の「初速」と、固定客化の導線</strong>を作る。</div>
+      </article>
+
+      <!-- LEFT -->
+      <article class="card left">
+        <h2><span class="mark"></span> 日常運営（守り） <span class="pill">左側</span></h2>
+
+        <div class="mini" style="margin-bottom:12px;">
+          <div class="t">1. 店舗運営管理</div>
+          <ul class="list">
+            <li>営業オペレーション設計／マニュアル／チェックリスト</li>
+            <li>在庫（ABC管理）／発注／補充／廃棄ログ</li>
+            <li>衛生管理（HACCP）／清掃基準／温度記録</li>
+            <li>設備・修理手配（業者連絡網／一次対応手順）</li>
+            <li>法令遵守／必要書類整備（食品衛生・労務等）</li>
+          </ul>
+          <div class="hint">
+            参考：HACCP（厚労省）
+            <a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/shokuhin/haccp/index.html" target="_blank" rel="noreferrer">リンク</a>
+          </div>
+        </div>
+
+        <div class="mini">
+          <div class="t">5. 財務・経理（運用）</div>
+          <ul class="list">
+            <li>売上・利益分析（キャッシュレス一括管理）</li>
+            <li>原価管理／経費管理（アプリ運用テスト→改善）</li>
+            <li>仕入・支払／帳簿（アプリ基盤活用）</li>
+            <li>人件費・給与支払い（店長管理の範囲を定義）</li>
+          </ul>
+        </div>
+
+        <div class="hint">ゴール：<strong>止めない／事故らない／赤字にしない</strong>。</div>
+      </article>
+
+      <!-- CENTER -->
+      <article class="center">
+        <div class="hub">
+          <h2>【 店長（現場責任者）】業務の中心（ハブ）</h2>
+          <p class="big">店舗運営の安定化・数値管理と改善・スタッフ育成・顧客体験の最大化・オーナーへの報告と提案</p>
+
+          <div class="mini">
+            <div class="t">店長のキーミッション</div>
+            <div class="v">「現場 × 数字 × 人」の交点を握る</div>
+          </div>
+
+          <div class="hub grid2" style="margin-top:14px;">
+            <div class="mini">
+              <div class="t">報告の型（例）</div>
+              <div class="v">数字 → 事実 → 仮説 → 次の一手（1つ）</div>
+            </div>
+            <div class="mini">
+              <div class="t">運用ルール</div>
+              <div class="v">許容レンジ合意（原価率・人件費率）→超過時は相談</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card foundation">
+          <h2><span class="mark"></span> 共通基盤（背景レイヤー）</h2>
+          <ul class="list">
+            <li>マニュアル化（誰でも再現できる）</li>
+            <li>自動化／仕組み化（作業を減らす）</li>
+            <li>数値化／可視化（判断を早くする）</li>
+            <li>PDCA（改善が回り続ける）</li>
+            <li>属人化しない設計（休んでも回る）</li>
+          </ul>
+          <div class="hint">ここが強いほど、採用難・繁忙期・欠員にも耐えます。</div>
+        </div>
+      </article>
+
+      <!-- RIGHT -->
+      <article class="card right">
+        <h2><span class="mark"></span> 人と顧客（攻め） <span class="pill">右側</span></h2>
+
+        <div class="mini" style="margin-bottom:12px;">
+          <div class="t">2. スタッフマネジメント</div>
+          <ul class="list">
+            <li>採用（進行中）／教育・研修（マニュアル＋ロープレ）</li>
+            <li>シフト管理（自動化テスト→運用）／欠勤バックアップ</li>
+            <li>評価指標の数値化（昇給・賞与基準を明確化）</li>
+            <li>目標設計（数字／スキル／行動）で成長実感</li>
+            <li>トラブル対応（マニュアル→更新→再発防止）</li>
+          </ul>
+        </div>
+
+        <div class="mini">
+          <div class="t">3. 顧客対応・サービス向上</div>
+          <ul class="list">
+            <li>顧客満足の仕組み（アンケート／声の収集）</li>
+            <li>クレーム対応（一次対応→記録→再発防止）</li>
+            <li>イベント企画（年間→月→週→日へ落とす）</li>
+            <li>常連顧客の関係構築（好み把握／体験設計）</li>
+            <li>予約管理（受付／キャンセル／特別要望対応）</li>
+          </ul>
+        </div>
+
+        <div class="hint">ゴール：<strong>人が育ち、ファンが増える</strong>。</div>
+      </article>
+
+      <!-- BOTTOM -->
+      <article class="card bottom span3">
+        <h2><span class="mark"></span> 改善と戦略（未来） <span class="pill">下部</span></h2>
+        <ul class="list">
+          <li>定例ミーティング（短く回す型：数字 → 気づき → 次の一手 1つ）</li>
+          <li>業務改善（効率化・品質向上・属人化排除）</li>
+          <li>競合・市場分析（必要ならコンサル活用）</li>
+          <li>顧客層拡大（新規企画／メニュー開発／導線設計）</li>
+        </ul>
+        <div class="hint">狙い：<strong>続く店にする（再現性ある成長）</strong>。</div>
+      </article>
+    </section>
+
+    <footer>
+      <div>© The Sake Council Tokyo（提出用たたき台）</div>
+      <div>Tip：PDF化はブラウザの「印刷」→「PDFに保存」でOK</div>
+    </footer>
+  </div>
+</body>
+</html>

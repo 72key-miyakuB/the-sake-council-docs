@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Sake Council Tokyo｜運営マニュアル雛形（HTML）</title>
+  <style>
+    :root{
+      --bg:#0b0d12;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.08);
+      --line: rgba(255,255,255,.12);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --accent:#d7b56d;  /* sake-gold */
+      --ok:#7ee3a6;
+      --warn:#ffcf6b;
+      --danger:#ff7a7a;
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --r:18px;
+      --r2:14px;
+      --pad:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", "Segoe UI", sans-serif;
+      background: radial-gradient(1200px 700px at 15% 10%, rgba(215,181,109,.18), transparent 60%),
+                  radial-gradient(1000px 600px at 90% 20%, rgba(126,227,166,.10), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.6;
+    }
+    a{color:rgba(134,212,255,.95); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:1200px; margin:0 auto; padding:26px 18px 46px}
+    header{
+      display:flex; gap:14px; justify-content:space-between; flex-wrap:wrap;
+      align-items:flex-start; margin-bottom:14px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px; color:var(--muted);
+      font-size:13px; letter-spacing:.04em;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: linear-gradient(180deg, var(--accent), rgba(215,181,109,.35));
+      box-shadow: 0 0 0 5px rgba(215,181,109,.12);
+    }
+    h1{margin:0; font-size:clamp(22px,2.4vw,32px)}
+    .sub{margin:6px 0 0; color:var(--muted); font-size:14px}
+    .meta{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+    .badge{
+      font-size:12px; padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.82);
+      backdrop-filter: blur(10px);
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 980px){ .layout{grid-template-columns:1fr} }
+
+    .card{
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:var(--pad);
+      backdrop-filter: blur(12px);
+    }
+
+    /* Sidebar */
+    .nav h2{margin:0 0 10px; font-size:14px; color:rgba(255,255,255,.88)}
+    .nav a{
+      display:block;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+      color:rgba(255,255,255,.86);
+      margin:8px 0;
+    }
+    .nav a:hover{border-color: rgba(215,181,109,.25); background: rgba(215,181,109,.10); text-decoration:none}
+    .nav small{color:var(--muted)}
+    .tip{
+      margin-top:12px;
+      padding:12px;
+      border-radius:14px;
+      border:1px dashed rgba(255,255,255,.16);
+      color:rgba(255,255,255,.74);
+      font-size:12px;
+    }
+    .tip code{font-family:var(--mono); font-size:11px; color:rgba(255,255,255,.86)}
+
+    /* Content */
+    section{scroll-margin-top: 14px;}
+    .sectionTitle{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      margin:0 0 10px;
+    }
+    .sectionTitle h2{margin:0; font-size:18px}
+    .pill{
+      font-size:11px; padding:4px 8px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.78);
+    }
+    .lead{margin:0 0 12px; color:rgba(255,255,255,.78); font-size:13px}
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 980px){ .grid2{grid-template-columns:1fr} }
+
+    details{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      border-radius: var(--r2);
+      padding: 12px 12px 10px;
+      margin:10px 0;
+      overflow:hidden;
+    }
+    summary{
+      cursor:pointer;
+      list-style:none;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      font-weight:650;
+      color:rgba(255,255,255,.90);
+    }
+    summary::-webkit-details-marker{display:none}
+    summary .tag{
+      font-size:11px; font-weight:600;
+      padding:4px 8px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.78);
+      flex:0 0 auto;
+    }
+    .box{
+      margin-top:10px;
+      border-top:1px dashed rgba(255,255,255,.14);
+      padding-top:10px;
+      color:rgba(255,255,255,.82);
+      font-size:13px;
+    }
+
+    /* Checklists */
+    .checklist{display:grid; gap:8px; margin:8px 0 0; padding:0}
+    .check{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:9px 10px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:12px;
+      background: rgba(255,255,255,.04);
+    }
+    .check input{margin-top:3px}
+    .check .t{font-size:13px}
+    .muted{color:var(--muted); font-size:12px}
+    .small{font-size:12px}
+    .hr{height:1px; background:rgba(255,255,255,.12); margin:14px 0}
+
+    /* Tables */
+    table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:14px; border:1px solid rgba(255,255,255,.12)}
+    th,td{padding:10px 10px; text-align:left; font-size:13px; vertical-align:top}
+    th{background:rgba(255,255,255,.08); color:rgba(255,255,255,.86); border-bottom:1px solid rgba(255,255,255,.12)}
+    td{background:rgba(0,0,0,.14); color:rgba(255,255,255,.82); border-bottom:1px solid rgba(255,255,255,.08)}
+    tr:last-child td{border-bottom:none}
+    .placeholder{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px dashed rgba(255,255,255,.22);
+      color:rgba(255,255,255,.70);
+      font-family:var(--mono);
+      font-size:11px;
+      background: rgba(0,0,0,.14);
+    }
+
+    .callout{
+      border:1px solid rgba(215,181,109,.22);
+      background: rgba(215,181,109,.10);
+      border-radius:14px;
+      padding:12px;
+      color:rgba(255,255,255,.86);
+      font-size:13px;
+    }
+    footer{
+      margin-top:16px;
+      color:rgba(255,255,255,.60);
+      font-size:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    @media print{
+      body{background:#fff; color:#111}
+      .card, details{box-shadow:none !important; background:#fff !important; border-color:#ddd !important}
+      .check{background:#fff !important; border-color:#ddd !important}
+      .badge{background:#f7f7f7 !important; border-color:#ddd !important; color:#333 !important}
+      a{color:#111}
+      .placeholder{border-color:#aaa; color:#333}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <div class="brand"><span class="dot"></span> The Sake Council Tokyo</div>
+        <h1>運営マニュアル雛形（HTML）</h1>
+        <p class="sub">店長・現場運用向け｜「誰が読んでも同じ行動になる」汎用テンプレ（営業しながら更新可能）</p>
+      </div>
+      <div class="meta">
+        <span class="badge">Version: 0.1</span>
+        <span class="badge">Updated: 2025-12-24</span>
+        <span class="badge">Format: HTML（1ファイル）</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside class="card nav">
+        <h2>目次</h2>
+        <a href="#ops">1. 店舗運営管理</a>
+        <a href="#staff">2. スタッフマネジメント</a>
+        <a href="#customer">3. 顧客対応・サービス向上</a>
+        <a href="#opening">4. オープニング準備（研修）</a>
+        <div class="tip">
+          編集のコツ：
+          <ul style="margin:8px 0 0; padding-left:18px;">
+            <li>未確定は <code>&lt;span class="placeholder"&gt;__&lt;/span&gt;</code> を残す</li>
+            <li>各章を <strong>チェックリスト</strong> 化すると運用が安定</li>
+            <li>トラブル系は <strong>記録→共有→再発防止</strong> を必ずセット</li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <main>
+        <!-- 1. 店舗運営管理 -->
+        <section id="ops" class="card">
+          <div class="sectionTitle">
+            <h2>1. 店舗運営管理</h2>
+            <span class="pill">運用の“守り”</span>
+          </div>
+          <p class="lead">日々の営業を安定させ、事故・欠品・衛生トラブル・営業停止リスクを最小化するための雛形。</p>
+
+          <!-- 1-1 日々の店舗運営 -->
+          <details open>
+            <summary>
+              <span>1-1. 日々の店舗運営（営業オペレーション）</span>
+              <span class="tag">チェックリスト</span>
+            </summary>
+            <div class="box">
+              <div class="grid2">
+                <div class="callout">
+                  <strong>目的</strong>：営業中の混乱・品質低下・ミスを防ぎ、提供体験を安定させる。<br>
+                  <strong>対象</strong>：全スタッフ（社員・アルバイト）<br>
+                  <strong>責任者</strong>：<span class="placeholder">店長</span>／当番責任者：<span class="placeholder">__</span>
+                </div>
+                <div class="callout">
+                  <strong>基本ルール</strong>
+                  <ul style="margin:8px 0 0; padding-left:18px;">
+                    <li>お客様最優先（安全・品質・体験）</li>
+                    <li>不明点は自己判断しない（必ず上長確認）</li>
+                    <li>ミスは即共有・即リカバリー</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">開店前（Open）</h3>
+              <div class="checklist">
+                <label class="check"><input type="checkbox"><span class="t">出勤打刻／身だしなみ確認（爪・髪・匂い・制服）</span></label>
+                <label class="check"><input type="checkbox"><span class="t">予約確認（時間・人数・アレルギー・席希望）</span></label>
+                <label class="check"><input type="checkbox"><span class="t">店内清掃（床・カウンター・トイレ）</span></label>
+                <label class="check"><input type="checkbox"><span class="t">仕込み状況確認（不足の有無）</span></label>
+                <label class="check"><input type="checkbox"><span class="t">機器点検（冷蔵庫・照明・空調・POS）</span></label>
+              </div>
+              <p class="muted">※「開店前に必ず完了」＝品質と事故防止の土台</p>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">営業中（Service）</h3>
+              <div class="callout">
+                <strong>標準フロー</strong>：注文 → 復唱 → キッチン共有 → 提供 → フォロー（味・不足確認）<br>
+                <strong>遅延基準</strong>：<span class="placeholder">●分</span> 以上で必ず声がけ／提供見込み共有<br>
+                <strong>欠品時</strong>：即全員に共有→代替提案（おすすめ）を統一
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">閉店後（Close）</h3>
+              <div class="checklist">
+                <label class="check"><input type="checkbox"><span class="t">ラストオーダー確認／お見送り</span></label>
+                <label class="check"><input type="checkbox"><span class="t">レジ締め／売上確認（差異があれば店長報告）</span></label>
+                <label class="check"><input type="checkbox"><span class="t">食材保管（密閉・ラベリング・日付）</span></label>
+                <label class="check"><input type="checkbox"><span class="t">清掃（厨房・床・排水口）</span></label>
+                <label class="check"><input type="checkbox"><span class="t">ゴミ分別／施錠／退勤打刻</span></label>
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">イレギュラー対応（最低限）</h3>
+              <ul class="small" style="margin:0; padding-left:18px; color:rgba(255,255,255,.82)">
+                <li><strong>満席／待ち発生</strong>：待ち時間見込み提示／席案内基準を統一</li>
+                <li><strong>提供遅延</strong>：声がけ→原因共有→リカバリー（先出し／一品サービス等は店長判断）</li>
+                <li><strong>事故／怪我</strong>：安全確保→応急処置→記録→必要なら救急</li>
+              </ul>
+            </div>
+          </details>
+
+          <!-- 1-2 在庫管理 -->
+          <details>
+            <summary>
+              <span>1-2. 在庫管理（発注・補充・期限・廃棄）</span>
+              <span class="tag">仕組み化</span>
+            </summary>
+            <div class="box">
+              <div class="grid2">
+                <div class="callout">
+                  <strong>目的</strong>：欠品・過剰在庫・廃棄ロスを防ぎ、提供品質を保つ。<br>
+                  <strong>担当</strong>：<span class="placeholder">__</span>（発注）／<span class="placeholder">__</span>（検品）
+                </div>
+                <div class="callout">
+                  <strong>運用ルール</strong>
+                  <ul style="margin:8px 0 0; padding-left:18px;">
+                    <li>A品（高単価・回転重要）は<strong>毎日</strong>確認</li>
+                    <li>B品（通常食材）は<strong>週2回</strong></li>
+                    <li>C品（消耗品）は<strong>月1回</strong></li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">在庫分類（例）</h3>
+              <table>
+                <thead>
+                  <tr><th>区分</th><th>例</th><th>確認頻度</th><th>発注基準（下限）</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>A</td><td>日本酒／高単価食材</td><td>毎日</td><td><span class="placeholder">__</span></td></tr>
+                  <tr><td>B</td><td>通常食材</td><td>週2回</td><td><span class="placeholder">__</span></td></tr>
+                  <tr><td>C</td><td>消耗品（紙類など）</td><td>月1回</td><td><span class="placeholder">__</span></td></tr>
+                </tbody>
+              </table>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">検品（入荷時）チェック</h3>
+              <div class="checklist">
+                <label class="check"><input type="checkbox"><span class="t">品名／数量／規格が合っている</span></label>
+                <label class="check"><input type="checkbox"><span class="t">破損・漏れ・異臭など異常がない</span></label>
+                <label class="check"><input type="checkbox"><span class="t">期限／ロット確認（必要なら記録）</span></label>
+                <label class="check"><input type="checkbox"><span class="t">先入先出（FIFO）で配置</span></label>
+                <label class="check"><input type="checkbox"><span class="t">ラベリング（入荷日／開封日）</span></label>
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">廃棄記録（例）</h3>
+              <table>
+                <thead>
+                  <tr><th>日付</th><th>品目</th><th>数量</th><th>理由</th><th>再発防止</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="placeholder">YYYY-MM-DD</span></td>
+                    <td><span class="placeholder">__</span></td>
+                    <td><span class="placeholder">__</span></td>
+                    <td><span class="placeholder">予測ミス／品質劣化／期限切れ</span></td>
+                    <td><span class="placeholder">発注基準見直し／提供提案強化</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+
+          <!-- 1-3 衛生管理 -->
+          <details>
+            <summary>
+              <span>1-3. 衛生管理（HACCP簡易対応／清掃／温度記録）</span>
+              <span class="tag">細かく</span>
+            </summary>
+            <div class="box">
+              <div class="callout">
+                <strong>目的</strong>：食中毒・事故防止／営業停止リスク回避。<br>
+                <strong>考え方</strong>：<em>「やっている証拠が残る」</em>運用（記録が店を守る）。
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">個人衛生（必須）</h3>
+              <div class="checklist">
+                <label class="check"><input type="checkbox"><span class="t">出勤時：手洗い／アルコール消毒／体調申告</span></label>
+                <label class="check"><input type="checkbox"><span class="t">調理前後：手洗い（石鹸20秒＋すすぎ）</span></label>
+                <label class="check"><input type="checkbox"><span class="t">手袋：作業ごとに交換（生→加熱→盛付で分ける）</span></label>
+                <label class="check"><input type="checkbox"><span class="t">体調不良（下痢・嘔吐・発熱）は即申告／無理に出勤しない</span></label>
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">温度管理（例）</h3>
+              <table>
+                <thead>
+                  <tr><th>項目</th><th>基準</th><th>チェック頻度</th><th>記録</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>冷蔵庫</td><td><span class="placeholder">0〜5℃</span></td><td>開店前／中間／閉店後</td><td>温度チェック表</td></tr>
+                  <tr><td>冷凍庫</td><td><span class="placeholder">-18℃以下</span></td><td>開店前／閉店後</td><td>温度チェック表</td></tr>
+                  <tr><td>保温</td><td><span class="placeholder">60℃以上</span></td><td>必要時</td><td>必要に応じ記録</td></tr>
+                </tbody>
+              </table>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">清掃（毎日／週次／月次）</h3>
+              <div class="grid2">
+                <div class="mini">
+                  <div class="t">毎日（Daily）</div>
+                  <div class="checklist">
+                    <label class="check"><input type="checkbox"><span class="t">調理台・シンク：洗浄→消毒</span></label>
+                    <label class="check"><input type="checkbox"><span class="t">包丁・まな板：洗浄→熱湯or消毒</span></label>
+                    <label class="check"><input type="checkbox"><span class="t">床：掃き→モップ</span></label>
+                    <label class="check"><input type="checkbox"><span class="t">トイレ：清掃／備品補充</span></label>
+                  </div>
+                </div>
+                <div class="mini">
+                  <div class="t">週次・月次（Weekly/Monthly）</div>
+                  <div class="checklist">
+                    <label class="check"><input type="checkbox"><span class="t">排水口：分解清掃（週1）</span></label>
+                    <label class="check"><input type="checkbox"><span class="t">冷蔵庫内部：棚卸し＋拭き上げ（週1）</span></label>
+                    <label class="check"><input type="checkbox"><span class="t">換気フィルター：清掃（⽉1）</span></label>
+                    <label class="check"><input type="checkbox"><span class="t">害虫対策：点検（⽉1）</span></label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">HACCP（簡易）テンプレ</h3>
+              <table>
+                <thead>
+                  <tr><th>工程</th><th>想定リスク</th><th>管理方法</th><th>記録</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>受入</td><td>腐敗・温度逸脱</td><td>検品・温度確認</td><td>検品チェック</td></tr>
+                  <tr><td>保管</td><td>交差汚染</td><td>生/加熱/盛付ゾーン分離</td><td>配置ルール</td></tr>
+                  <tr><td>調理</td><td>加熱不足</td><td>中心温度管理（必要に応じ）</td><td>記録（必要時）</td></tr>
+                  <tr><td>提供</td><td>異物混入</td><td>盛付確認・器具管理</td><td>ヒヤリハット</td></tr>
+                </tbody>
+              </table>
+
+              <p class="muted" style="margin-top:10px;">
+                参考：HACCP（厚労省）
+                <a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/shokuhin/haccp/index.html" target="_blank" rel="noreferrer">https://www.mhlw.go.jp/.../haccp</a>
+              </p>
+            </div>
+          </details>
+
+          <!-- 1-4 施設管理 -->
+          <details>
+            <summary>
+              <span>1-4. 施設管理（設備トラブル一次対応／業者連絡網）</span>
+              <span class="tag">止めない</span>
+            </summary>
+            <div class="box">
+              <div class="callout">
+                <strong>目的</strong>：設備故障による営業停止を防ぐ。<br>
+                <strong>原則</strong>：安全確保 → 影響把握 → 店長報告 → 業者連絡（記録）
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">一次対応フロー（共通）</h3>
+              <ol class="small" style="margin:0; padding-left:18px; color:rgba(255,255,255,.82)">
+                <li>安全確認（感電・火災・漏水の恐れがあれば即停止）</li>
+                <li>営業影響の確認（提供可否／代替手段）</li>
+                <li>店長へ報告（状況・写真・エラー表示）</li>
+                <li>業者へ連絡（型番・症状・希望時間）</li>
+                <li>対応内容を記録（日時・担当・費用見込み）</li>
+              </ol>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">業者連絡リスト（記入欄）</h3>
+              <table>
+                <thead>
+                  <tr><th>設備</th><th>業者名</th><th>電話</th><th>受付時間</th><th>備考（型番/設置場所）</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>冷蔵庫</td><td><span class="placeholder">__</span></td><td><span class="placeholder">__</span></td><td><span class="placeholder">__</span></td><td><span class="placeholder">__</span></td></tr>
+                  <tr><td>空調</td><td><span class="placeholder">__</span></td><td><span class="placeholder">__</span></td><td><span class="placeholder">__</span></td><td><span class="placeholder">__</span></td></tr>
+                  <tr><td>電気</td><td><span class="placeholder">__</span></td><td><span class="placeholder">__</span></td><td><span class="placeholder">__</span></td><td><span class="placeholder">__</span></td></tr>
+                  <tr><td>水道</td><td><span class="placeholder">__</span></td><td><span class="placeholder">__</span></td><td><span class="placeholder">__</span></td><td><span class="placeholder">__</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+
+          <!-- 1-5 法令遵守 -->
+          <details>
+            <summary>
+              <span>1-5. 法令遵守（必要書類／労務／衛生）</span>
+              <span class="tag">リスク管理</span>
+            </summary>
+            <div class="box">
+              <div class="callout">
+                <strong>目的</strong>：法令違反・監査不備を防ぎ、店とスタッフを守る。<br>
+                <strong>運用</strong>：保管場所・責任者・更新頻度を明確化する。
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">必須書類チェック（例）</h3>
+              <table>
+                <thead>
+                  <tr><th>書類</th><th>保管場所</th><th>責任者</th><th>更新頻度</th><th>備考</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>営業許可証</td><td><span class="placeholder">__</span></td><td><span class="placeholder">__</span></td><td>必要時</td><td>見える場所に掲示</td></tr>
+                  <tr><td>食品衛生責任者</td><td><span class="placeholder">__</span></td><td><span class="placeholder">__</span></td><td>必要時</td><td></td></tr>
+                  <tr><td>HACCP 記録（温度/清掃）</td><td><span class="placeholder">__</span></td><td><span class="placeholder">__</span></td><td>毎日/週次</td><td>紙orデジタル</td></tr>
+                  <tr><td>雇用契約/労働条件通知書</td><td><span class="placeholder">__</span></td><td><span class="placeholder">__</span></td><td>採用時</td><td></td></tr>
+                  <tr><td>勤怠/シフト記録</td><td><span class="placeholder">__</span></td><td><span class="placeholder">__</span></td><td>毎月</td><td></td></tr>
+                </tbody>
+              </table>
+
+              <p class="muted" style="margin-top:10px;">
+                HACCP参照（厚労省）：<a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/shokuhin/haccp/index.html" target="_blank" rel="noreferrer">公式ページ</a>
+              </p>
+            </div>
+          </details>
+        </section>
+
+        <!-- 2. スタッフマネジメント -->
+        <section id="staff" class="card" style="margin-top:14px;">
+          <div class="sectionTitle">
+            <h2>2. スタッフマネジメント</h2>
+            <span class="pill">人の“土台”</span>
+          </div>
+          <p class="lead">教育の標準化・トラブルの早期収束・再発防止の仕組み化。</p>
+
+          <!-- 2-1 教育・トレーニング -->
+          <details open>
+            <summary>
+              <span>2-1. 教育・トレーニング（研修設計／ロープレ）</span>
+              <span class="tag">育成</span>
+            </summary>
+            <div class="box">
+              <div class="callout">
+                <strong>目的</strong>：誰でも一定品質で接客・提供できる状態を作る。<br>
+                <strong>研修責任者</strong>：<span class="placeholder">店長</span>／トレーナー：<span class="placeholder">__</span>
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">研修ステップ（汎用）</h3>
+              <table>
+                <thead>
+                  <tr><th>ステップ</th><th>到達目標</th><th>内容</th><th>合格条件</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>STEP1 基礎</td>
+                    <td>最低限の接客・衛生</td>
+                    <td>挨拶／用語／手洗い／導線</td>
+                    <td><span class="placeholder">チェックリスト100%</span></td>
+                  </tr>
+                  <tr>
+                    <td>STEP2 実務</td>
+                    <td>注文〜提供が回る</td>
+                    <td>復唱／提供補助／レジ補助</td>
+                    <td><span class="placeholder">ロープレ合格</span></td>
+                  </tr>
+                  <tr>
+                    <td>STEP3 応用</td>
+                    <td>提案・初期対応</td>
+                    <td>日本酒説明／軽微クレーム初期対応</td>
+                    <td><span class="placeholder">OJT評価</span></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">新人チェックリスト（例）</h3>
+              <div class="checklist">
+                <label class="check"><input type="checkbox"><span class="t">挨拶／席案内／オーダー復唱ができる</span></label>
+                <label class="check"><input type="checkbox"><span class="t">基本メニューとおすすめを説明できる</span></label>
+                <label class="check"><input type="checkbox"><span class="t">食器・備品の場所を把握している</span></label>
+                <label class="check"><input type="checkbox"><span class="t">衛生ルール（手洗い・手袋交換）を守れる</span></label>
+              </div>
+              <p class="muted">※合格後も「教えられる」レベルまで段階設計すると強いです。</p>
+            </div>
+          </details>
+
+          <!-- 2-2 トラブル対応 -->
+          <details>
+            <summary>
+              <span>2-2. トラブル対応（スタッフ間／現場発生）</span>
+              <span class="tag">再発防止</span>
+            </summary>
+            <div class="box">
+              <div class="callout">
+                <strong>原則</strong>：感情ではなく事実ベース／当事者だけで完結させない／記録を残す。<br>
+                <strong>ゴール</strong>：早期収束＋再発防止（仕組みの更新）。
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">対応フロー</h3>
+              <ol class="small" style="margin:0; padding-left:18px; color:rgba(255,255,255,.82)">
+                <li>状況把握（いつ／誰が／何が）</li>
+                <li>当事者から個別にヒアリング（事実と解釈を分ける）</li>
+                <li>店長判断（注意／配置換え／ルール修正／必要なら面談）</li>
+                <li>記録（トラブルログ）→共有範囲を決めて周知</li>
+                <li>再発防止（マニュアル・チェックリスト更新）</li>
+              </ol>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">トラブルログ（例）</h3>
+              <table>
+                <thead>
+                  <tr><th>日時</th><th>概要</th><th>原因仮説</th><th>対応</th><th>再発防止</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="placeholder">YYYY-MM-DD</span></td>
+                    <td><span class="placeholder">__</span></td>
+                    <td><span class="placeholder">共有不足／導線不明／指示の曖昧さ</span></td>
+                    <td><span class="placeholder">面談／配置換え／注意</span></td>
+                    <td><span class="placeholder">ルール明文化／チェック項目追加</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </section>
+
+        <!-- 3. 顧客対応・サービス向上 -->
+        <section id="customer" class="card" style="margin-top:14px;">
+          <div class="sectionTitle">
+            <h2>3. 顧客対応・サービス向上</h2>
+            <span class="pill">信頼を守る</span>
+          </div>
+          <p class="lead">クレームは「失点」ではなく「改善の材料」。一次対応を標準化し、再発防止につなげる。</p>
+
+          <!-- 3-1 クレーム対応 -->
+          <details open>
+            <summary>
+              <span>3-1. クレーム対応（一次対応／報告／再発防止）</span>
+              <span class="tag">標準化</span>
+            </summary>
+            <div class="box">
+              <div class="callout">
+                <strong>基本姿勢</strong>：まず謝罪／言い訳しない／その場でできる解決を提示。<br>
+                <strong>優先順位</strong>：安全 → 感情の鎮静 → 事実確認 → 解決策 → 記録
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">一次対応（スタッフ共通）</h3>
+              <ol class="small" style="margin:0; padding-left:18px; color:rgba(255,255,255,.82)">
+                <li><strong>傾聴</strong>（遮らない／相槌）</li>
+                <li><strong>謝罪</strong>（不快にさせた点に対して）</li>
+                <li><strong>確認</strong>（何が・いつ・どの商品／サービス）</li>
+                <li><strong>解決策提示</strong>（作り直し／変更／返金などは店長判断）</li>
+                <li><strong>店長へ引継ぎ</strong>（必要時はその場で）</li>
+              </ol>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">NG行動（禁止）</h3>
+              <div class="checklist">
+                <label class="check"><input type="checkbox"><span class="t"><strong>否定</strong>（「それは違います」）</span></label>
+                <label class="check"><input type="checkbox"><span class="t"><strong>他責</strong>（「厨房が…」）</span></label>
+                <label class="check"><input type="checkbox"><span class="t"><strong>放置</strong>（席を離れたまま戻らない）</span></label>
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">クレームログ（例）</h3>
+              <table>
+                <thead>
+                  <tr><th>日時</th><th>内容</th><th>一次対応</th><th>店長判断</th><th>再発防止</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="placeholder">YYYY-MM-DD</span></td>
+                    <td><span class="placeholder">提供遅延／品質／接客</span></td>
+                    <td><span class="placeholder">謝罪＋状況説明</span></td>
+                    <td><span class="placeholder">作り直し／返金／代替</span></td>
+                    <td><span class="placeholder">導線改善／仕込み量調整／声がけ基準</span></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <p class="muted" style="margin-top:10px;">
+                ※再発防止は「ルール化（誰でも守れる）」「チェック化（忘れない）」が基本。
+              </p>
+            </div>
+          </details>
+        </section>
+
+        <!-- 4. オープニング準備 -->
+        <section id="opening" class="card" style="margin-top:14px;">
+          <div class="sectionTitle">
+            <h2>4. オープニング準備（新店）</h2>
+            <span class="pill">立ち上げ</span>
+          </div>
+          <p class="lead">初日から最低限の品質を担保するための「研修設計」と「通し稽古」の雛形。</p>
+
+          <!-- 4-1 オープニング研修 -->
+          <details open>
+            <summary>
+              <span>4-1. スタッフのオープニング研修（全体設計）</span>
+              <span class="tag">初速</span>
+            </summary>
+            <div class="box">
+              <div class="grid2">
+                <div class="callout">
+                  <strong>目的</strong>：初日から「最低限の質」を担保し、事故・混乱・クレームを防ぐ。<br>
+                  <strong>研修期間</strong>：<span class="placeholder">__日間</span>／<strong>参加必須</strong>：全員
+                </div>
+                <div class="callout">
+                  <strong>研修の柱</strong>
+                  <ul style="margin:8px 0 0; padding-left:18px;">
+                    <li>コンセプト理解（世界観の統一）</li>
+                    <li>導線と役割（迷わない）</li>
+                    <li>ロープレ（初日から回る）</li>
+                    <li>緊急時対応（止血・火災・クレーム）</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">研修メニュー（例）</h3>
+              <table>
+                <thead>
+                  <tr><th>回</th><th>テーマ</th><th>内容</th><th>合格条件</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>1</td><td>店の世界観</td><td>コンセプト／ターゲット／接客の温度感</td><td><span class="placeholder">口頭確認</span></td></tr>
+                  <tr><td>2</td><td>導線・役割</td><td>席運用／注文／提供／片付け／会計</td><td><span class="placeholder">通し稽古</span></td></tr>
+                  <tr><td>3</td><td>ロープレ</td><td>入店〜退店／おすすめ提案／遅延時対応</td><td><span class="placeholder">評価チェック</span></td></tr>
+                  <tr><td>4</td><td>緊急時</td><td>怪我／火災／停電／クレーム初期対応</td><td><span class="placeholder">手順暗記</span></td></tr>
+                </tbody>
+              </table>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 6px; font-size:14px;">オープン前 最終確認（当日チェック）</h3>
+              <div class="checklist">
+                <label class="check"><input type="checkbox"><span class="t">全員が基本導線（入口→席→提供→会計）を理解</span></label>
+                <label class="check"><input type="checkbox"><span class="t">役割分担（誰が何をするか）が明確</span></label>
+                <label class="check"><input type="checkbox"><span class="t">おすすめ・欠品時の代替提案が統一</span></label>
+                <label class="check"><input type="checkbox"><span class="t">緊急連絡網（店長／オーナー／業者）が共有済み</span></label>
+                <label class="check"><input type="checkbox"><span class="t">衛生・温度・清掃チェックが運用開始</span></label>
+              </div>
+
+              <p class="muted" style="margin-top:10px;">
+                ※オープン後は「トラブルログ」「クレームログ」を元に毎週1回だけ更新していくと、強い店になります。
+              </p>
+            </div>
+          </details>
+        </section>
+
+        <footer>
+          <div>© The Sake Council Tokyo｜Manual Template</div>
+          <div>Tip：ブラウザの「印刷」→「PDFに保存」で提出用PDFに変換できます</div>
+        </footer>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

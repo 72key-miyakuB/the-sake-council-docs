@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Sake Council Tokyo｜自動化・システム化 設計一覧（提案）</title>
+  <style>
+    :root{
+      --bg:#0b0d12;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.08);
+      --line: rgba(255,255,255,.12);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --accent:#d7b56d;    /* sake-gold */
+      --blue:#86d4ff;
+      --green:#7ee3a6;
+      --yellow:#ffcf6b;
+      --red:#ff7a7a;
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --r:18px;
+      --r2:14px;
+      --pad:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", "Segoe UI", sans-serif;
+      background: radial-gradient(1200px 700px at 15% 10%, rgba(215,181,109,.18), transparent 60%),
+                  radial-gradient(1000px 600px at 90% 20%, rgba(134,212,255,.12), transparent 55%),
+                  radial-gradient(900px 500px at 50% 110%, rgba(126,227,166,.10), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.6;
+    }
+    .wrap{max-width:1200px; margin:0 auto; padding:26px 18px 46px}
+    header{
+      display:flex; gap:14px; justify-content:space-between; flex-wrap:wrap;
+      align-items:flex-start; margin-bottom:14px;
+    }
+    .brand{display:flex; align-items:center; gap:10px; color:var(--muted); font-size:13px; letter-spacing:.04em;}
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: linear-gradient(180deg, var(--accent), rgba(215,181,109,.35));
+      box-shadow: 0 0 0 5px rgba(215,181,109,.12);
+    }
+    h1{margin:0; font-size:clamp(22px,2.4vw,32px)}
+    .sub{margin:6px 0 0; color:var(--muted); font-size:14px}
+    .meta{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+    .badge{
+      font-size:12px; padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.82);
+      backdrop-filter: blur(10px);
+    }
+
+    .layout{display:grid; grid-template-columns: 320px 1fr; gap:14px; align-items:start;}
+    @media (max-width: 980px){ .layout{grid-template-columns:1fr} }
+
+    .card{
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:var(--pad);
+      backdrop-filter: blur(12px);
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-2px -2px auto auto;
+      width:220px; height:220px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.09), transparent 62%);
+      transform: translate(30%,-30%);
+      pointer-events:none;
+    }
+
+    /* left nav */
+    .nav h2{margin:0 0 10px; font-size:14px; color:rgba(255,255,255,.88)}
+    .nav a{
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+      color:rgba(255,255,255,.86);
+      margin:8px 0;
+      text-decoration:none;
+    }
+    .nav a:hover{border-color: rgba(215,181,109,.25); background: rgba(215,181,109,.10); }
+    .count{
+      font-size:11px;
+      padding:3px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.78);
+      flex:0 0 auto;
+    }
+
+    .legend{
+      margin-top:12px;
+      padding:12px;
+      border-radius:14px;
+      border:1px dashed rgba(255,255,255,.16);
+      color:rgba(255,255,255,.74);
+      font-size:12px;
+    }
+    .pillrow{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+    .pill{
+      font-size:11px;
+      padding:6px 9px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.80);
+      white-space:nowrap;
+    }
+    .p-now{border-color:rgba(126,227,166,.30); background:rgba(126,227,166,.10)}
+    .p-soon{border-color:rgba(255,207,107,.30); background:rgba(255,207,107,.10)}
+    .p-later{border-color:rgba(134,212,255,.30); background:rgba(134,212,255,.10)}
+
+    /* content */
+    section{scroll-margin-top: 12px;}
+    .sectionTitle{
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      margin:0 0 10px;
+    }
+    .sectionTitle h2{margin:0; font-size:18px}
+    .lead{margin:0 0 12px; color:rgba(255,255,255,.78); font-size:13px}
+
+    details{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      border-radius: var(--r2);
+      padding: 12px 12px 10px;
+      margin:10px 0;
+      overflow:hidden;
+    }
+    summary{
+      cursor:pointer;
+      list-style:none;
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+      font-weight:750;
+      color:rgba(255,255,255,.92);
+    }
+    summary::-webkit-details-marker{display:none}
+    .tags{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+    .tag{
+      font-size:11px; font-weight:650;
+      padding:4px 8px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.78);
+    }
+    .t-now{border-color:rgba(126,227,166,.30); background:rgba(126,227,166,.10)}
+    .t-soon{border-color:rgba(255,207,107,.30); background:rgba(255,207,107,.10)}
+    .t-later{border-color:rgba(134,212,255,.30); background:rgba(134,212,255,.10)}
+    .t-risk{border-color:rgba(255,122,122,.30); background:rgba(255,122,122,.10)}
+    .t-kpi{border-color:rgba(215,181,109,.30); background:rgba(215,181,109,.12)}
+
+    .box{
+      margin-top:10px;
+      border-top:1px dashed rgba(255,255,255,.14);
+      padding-top:10px;
+      color:rgba(255,255,255,.84);
+      font-size:13px;
+    }
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 980px){ .grid2{grid-template-columns:1fr} }
+
+    .callout{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      border-radius:14px;
+      padding:12px;
+    }
+    .callout h3{margin:0 0 8px; font-size:13px}
+    ul{margin:8px 0 0; padding-left:18px}
+    li{margin:6px 0}
+    code{font-family:var(--mono); font-size:12px; color:rgba(255,255,255,.86)}
+    .small{font-size:12px; color:rgba(255,255,255,.76)}
+    table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:14px; border:1px solid rgba(255,255,255,.12); margin-top:10px}
+    th,td{padding:10px 10px; text-align:left; font-size:13px; vertical-align:top}
+    th{background:rgba(255,255,255,.08); color:rgba(255,255,255,.86); border-bottom:1px solid rgba(255,255,255,.12)}
+    td{background:rgba(0,0,0,.14); color:rgba(255,255,255,.82); border-bottom:1px solid rgba(255,255,255,.08)}
+    tr:last-child td{border-bottom:none}
+    .placeholder{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px dashed rgba(255,255,255,.22);
+      color:rgba(255,255,255,.70);
+      font-family:var(--mono);
+      font-size:11px;
+      background: rgba(0,0,0,.14);
+    }
+    .hr{height:1px; background:rgba(255,255,255,.12); margin:14px 0}
+
+    footer{
+      margin-top:16px;
+      color:rgba(255,255,255,.60);
+      font-size:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    @media print{
+      body{background:#fff; color:#111}
+      .card, details{box-shadow:none !important; background:#fff !important; border-color:#ddd !important}
+      .badge,.pill,.tag{background:#f7f7f7 !important; border-color:#ddd !important; color:#333 !important}
+      table{border-color:#ddd}
+      th{background:#f3f3f3; color:#111}
+      td{background:#fff; color:#111}
+      a{color:#111}
+      .placeholder{border-color:#aaa; color:#333}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <div class="brand"><span class="dot"></span> The Sake Council Tokyo</div>
+        <h1>自動化・システム化 設計一覧（提案）</h1>
+        <p class="sub">店長業務の中から「自動化できる領域」を抽出し、<strong>具体的に何をどんな仕組みで実装するか</strong>を明示</p>
+      </div>
+      <div class="meta">
+        <span class="badge">Version: 0.1</span>
+        <span class="badge">Updated: 2025-12-24</span>
+        <span class="badge">Scope: Automation</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside class="card nav">
+        <h2>自動化対象（目次）</h2>
+        <a href="#sales">売上管理（キャッシュレス統合） <span class="count">5</span></a>
+        <a href="#cost">コスト管理（原価・経費・労務） <span class="count">6</span></a>
+        <a href="#inventory">在庫・発注・廃棄 <span class="count">6</span></a>
+        <a href="#menu">メニュー管理（表示・更新・QR） <span class="count">5</span></a>
+        <a href="#shift">シフト管理（自動化） <span class="count">5</span></a>
+        <a href="#voice">顧客の声（満足度・改善） <span class="count">4</span></a>
+        <a href="#promo">イベント・プロモ企画（スケジュール化） <span class="count">4</span></a>
+
+        <div class="legend">
+          <strong>優先度（実装の順番）</strong>
+          <div class="pillrow">
+            <span class="pill p-now">NOW：すぐ運用（既存基盤あり）</span>
+            <span class="pill p-soon">SOON：短期実装（効果大）</span>
+            <span class="pill p-later">LATER：中期（拡張）</span>
+          </div>
+          <div class="hr"></div>
+          <div class="small">
+            ※衛生・法令・設備は「記録のデジタル化」までは自動化可。ただし判断は人が持つ（監査・責任の観点）。
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <main>
+        <!-- Sales -->
+        <section id="sales" class="card">
+          <div class="sectionTitle">
+            <h2>売上管理（キャッシュレス統合）</h2>
+            <span class="pill">自動集計→可視化→報告</span>
+          </div>
+          <p class="lead">キャッシュレス店舗の強みを活かし、<strong>日次・週次の売上報告を自動生成</strong>。施策判断に繋げる。</p>
+
+          <details open>
+            <summary>
+              <span>自動化ピックアップ：売上集計・レポート自動生成</span>
+              <span class="tags">
+                <span class="tag t-now">NOW</span>
+                <span class="tag t-kpi">KPI</span>
+              </span>
+            </summary>
+            <div class="box">
+              <div class="grid2">
+                <div class="callout">
+                  <h3>何を自動化する？（To-Be）</h3>
+                  <ul>
+                    <li>決済データの<strong>自動取り込み</strong>（日次）</li>
+                    <li>売上の<strong>日次/週次レポート</strong>自動生成（PDF/HTML）</li>
+                    <li>客単価・曜日別・時間帯別の<strong>可視化</strong></li>
+                  </ul>
+                </div>
+                <div class="callout">
+                  <h3>どうシステム化する？（例）</h3>
+                  <ul>
+                    <li>決済/POSのCSV/APIを定期取得 → <code>sales_raw</code> に保存</li>
+                    <li>集計バッチ（Python/Apps Script）→ <code>sales_daily</code> / <code>sales_weekly</code></li>
+                    <li>テンプレHTMLに差し込み → 自動で「日報」生成</li>
+                  </ul>
+                  <div class="small">出力：<span class="placeholder">日報HTML</span> / <span class="placeholder">週報PDF</span></div>
+                </div>
+              </div>
+
+              <table>
+                <thead><tr><th>入力</th><th>処理</th><th>出力</th><th>運用者</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td>POS/決済データ（CSV/API）</td>
+                    <td>自動取込→自動集計→グラフ/指標生成</td>
+                    <td>日報（売上/客単価/前年差）</td>
+                    <td>店長（確認のみ）</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="small">
+                KPI例：売上（週）／客単価／客数／曜日別偏り／前年差・前週比
+              </div>
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              <span>アラート：異常値検知（売上急落・客単価急変）</span>
+              <span class="tags">
+                <span class="tag t-soon">SOON</span>
+                <span class="tag t-risk">RISK</span>
+              </span>
+            </summary>
+            <div class="box">
+              <div class="callout">
+                <h3>仕組み</h3>
+                <ul>
+                  <li>前週平均との差が <span class="placeholder">-20%</span> など閾値超えで通知</li>
+                  <li>通知先：Slack/LINE/メール（店長＋オーナー）</li>
+                </ul>
+                <div class="small">例：<code>if sales_today &lt; avg_last_4weeks*0.8 then notify</code></div>
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <!-- Cost -->
+        <section id="cost" class="card" style="margin-top:14px;">
+          <div class="sectionTitle">
+            <h2>コスト管理（原価・経費・労務）</h2>
+            <span class="pill">自動収集→原価率/人件費率→改善</span>
+          </div>
+          <p class="lead">既存の原価・経費アプリ基盤を活用し、<strong>「毎日見える」「超えたら知らせる」</strong>運用へ。</p>
+
+          <details open>
+            <summary>
+              <span>自動化ピックアップ：原価・経費の自動取り込み／原価率算出</span>
+              <span class="tags">
+                <span class="tag t-now">NOW</span>
+                <span class="tag t-kpi">KPI</span>
+              </span>
+            </summary>
+            <div class="box">
+              <div class="grid2">
+                <div class="callout">
+                  <h3>何を自動化する？</h3>
+                  <ul>
+                    <li>レシート/請求の取り込み（画像→データ化）</li>
+                    <li>品目ごとの単価マスター連携 → 原価自動計算</li>
+                    <li>原価率（週/月）を自動算出</li>
+                  </ul>
+                </div>
+                <div class="callout">
+                  <h3>どうシステム化する？</h3>
+                  <ul>
+                    <li>仕入れ入力：カメラ/OCR → <code>purchase_raw</code>（既存アプリ）</li>
+                    <li>単価マスター：<code>master_unit_price</code> を参照して自動換算</li>
+                    <li>売上（sales）と突合 → <code>cogs_rate</code> 生成</li>
+                  </ul>
+                  <div class="small">設定：目標原価率 <span class="placeholder">__%</span>（許容レンジも合意）</div>
+                </div>
+              </div>
+
+              <details>
+                <summary>
+                  <span>追加：予算・許容レンジ超過のアラート</span>
+                  <span class="tags"><span class="tag t-soon">SOON</span><span class="tag t-risk">RISK</span></span>
+                </summary>
+                <div class="box">
+                  <ul>
+                    <li>原価率が許容上限 <span class="placeholder">__%</span> 超過 → 店長に通知</li>
+                    <li>人件費率が許容上限 <span class="placeholder">__%</span> 超過 → シフト最適化提案</li>
+                  </ul>
+                </div>
+              </details>
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              <span>労務：勤怠→人件費率の自動更新（シフト連動）</span>
+              <span class="tags"><span class="tag t-soon">SOON</span><span class="tag t-kpi">KPI</span></span>
+            </summary>
+            <div class="box">
+              <div class="callout">
+                <h3>仕組み</h3>
+                <ul>
+                  <li>勤怠（打刻）を日次で取得 → 時給マスターと掛け合わせ</li>
+                  <li>売上データと突合して人件費率を自動表示</li>
+                  <li>翌週の必要人数を推定（売上予測ベース）</li>
+                </ul>
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <!-- Inventory -->
+        <section id="inventory" class="card" style="margin-top:14px;">
+          <div class="sectionTitle">
+            <h2>在庫・発注・廃棄</h2>
+            <span class="pill">棚卸→発注→欠品防止</span>
+          </div>
+          <p class="lead">在庫は「入力を最小化」し、<strong>発注提案（おすすめ発注）</strong>まで自動化する。</p>
+
+          <details open>
+            <summary>
+              <span>自動化ピックアップ：発注提案（在庫・回転・予約から自動）</span>
+              <span class="tags"><span class="tag t-soon">SOON</span><span class="tag t-kpi">KPI</span></span>
+            </summary>
+            <div class="box">
+              <div class="grid2">
+                <div class="callout">
+                  <h3>何を自動化する？</h3>
+                  <ul>
+                    <li>棚卸入力（スマホ）→在庫の自動更新</li>
+                    <li>消費ペースから「発注候補」を自動算出</li>
+                    <li>予約（人数）から必要量を上乗せ</li>
+                    <li>欠品リスクの通知</li>
+                  </ul>
+                </div>
+                <div class="callout">
+                  <h3>どうシステム化する？</h3>
+                  <ul>
+                    <li>在庫テーブル：<code>inventory</code>（SKU/数量/期限）</li>
+                    <li>売上・提供数から消費推定：<code>usage_est</code></li>
+                    <li>発注案：<code>po_suggest</code> を生成し、発注書CSVに出力</li>
+                  </ul>
+                  <div class="small">発注先別にCSVを分ける（業者ごと）</div>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              <span>期限・廃棄：期限アラート／廃棄ログ自動集計</span>
+              <span class="tags"><span class="tag t-soon">SOON</span><span class="tag t-risk">RISK</span></span>
+            </summary>
+            <div class="box">
+              <ul>
+                <li>入荷時に期限入力（or ロット入力）→ 期限 <span class="placeholder">3日前</span> に通知</li>
+                <li>廃棄入力を簡略化（理由プリセット）→ 月次ロスを自動集計</li>
+                <li>ロス上位品目を自動ランキング → 発注基準見直しへ</li>
+              </ul>
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              <span>日本酒在庫：ボトル管理（開栓日／提供杯数／在庫見える化）</span>
+              <span class="tags"><span class="tag t-later">LATER</span><span class="tag t-kpi">KPI</span></span>
+            </summary>
+            <div class="box">
+              <ul>
+                <li>開栓時に「開栓日」を登録 → 提供杯数から残量推定</li>
+                <li>劣化リスク（開栓後日数）をアラート</li>
+                <li>おすすめ（回転が落ちている酒）を自動で提案</li>
+              </ul>
+              <div class="small">※日本酒QRシステムと連動できると強い（商品ID共通化）。</div>
+            </div>
+          </details>
+        </section>
+
+        <!-- Menu -->
+        <section id="menu" class="card" style="margin-top:14px;">
+          <div class="sectionTitle">
+            <h2>メニュー管理（表示・更新・QR）</h2>
+            <span class="pill">一括更新→即反映</span>
+          </div>
+          <p class="lead">メニューは「更新が面倒」だと劣化するので、<strong>更新を1箇所に集約</strong>して自動反映。</p>
+
+          <details open>
+            <summary>
+              <span>自動化ピックアップ：マスタ編集→メニューHTML/QR自動生成</span>
+              <span class="tags"><span class="tag t-now">NOW</span><span class="tag t-kpi">KPI</span></span>
+            </summary>
+            <div class="box">
+              <div class="grid2">
+                <div class="callout">
+                  <h3>何を自動化する？</h3>
+                  <ul>
+                    <li>商品マスター更新（価格/在庫/おすすめ）</li>
+                    <li>タブレット/スマホ向けメニューを自動生成</li>
+                    <li>品切れの自動非表示（or グレー表示）</li>
+                  </ul>
+                </div>
+                <div class="callout">
+                  <h3>どうシステム化する？</h3>
+                  <ul>
+                    <li>マスター：<code>menu_master</code>（CSV/Sheet）</li>
+                    <li>ビルド：テンプレに差し込み → <code>menu.html</code> 生成</li>
+                    <li>QR：<code>menu.html</code> のURLをQR化（更新不要）</li>
+                  </ul>
+                  <div class="small">推奨：タブレット＋お客様スマホの併用（回遊性UP）</div>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              <span>原価連動：原価率から価格の妥当性チェック（提案）</span>
+              <span class="tags"><span class="tag t-later">LATER</span><span class="tag t-kpi">KPI</span></span>
+            </summary>
+            <div class="box">
+              <ul>
+                <li>原価（単価マスター）と販売価格から「原価率」を自動算出</li>
+                <li>原価率が高すぎる商品をハイライト（値付け/量の検討）</li>
+              </ul>
+            </div>
+          </details>
+        </section>
+
+        <!-- Shift -->
+        <section id="shift" class="card" style="margin-top:14px;">
+          <div class="sectionTitle">
+            <h2>シフト管理（自動化）</h2>
+            <span class="pill">希望→自動割当→公平性</span>
+          </div>
+          <p class="lead">テスト段階の基盤を「運用に耐える」形へ。欠勤時のバックアップまで含めて設計。</p>
+
+          <details open>
+            <summary>
+              <span>自動化ピックアップ：希望収集→自動シフト生成（公平性制御）</span>
+              <span class="tags"><span class="tag t-now">NOW</span><span class="tag t-kpi">KPI</span></span>
+            </summary>
+            <div class="box">
+              <div class="grid2">
+                <div class="callout">
+                  <h3>何を自動化する？</h3>
+                  <ul>
+                    <li>希望/NGのフォーム入力 → 自動集計</li>
+                    <li>必要人数（曜日×時間帯）に合わせて自動割当</li>
+                    <li>稼働率の偏りを自動検知→均等化提案</li>
+                    <li>欠勤時の代替候補を自動リストアップ</li>
+                  </ul>
+                </div>
+                <div class="callout">
+                  <h3>どうシステム化する？</h3>
+                  <ul>
+                    <li>入力：Google Form/アプリ → <code>requests</code></li>
+                    <li>最適化：制約（NG/連勤/公平性）でスコアリング</li>
+                    <li>出力：<code>shift.csv</code> / カレンダー表示 / スタッフ通知</li>
+                  </ul>
+                  <div class="small">公平性KPI：月間稼働時間の標準偏差を可視化</div>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              <span>勤怠連携：打刻→給与概算→人件費率まで自動化</span>
+              <span class="tags"><span class="tag t-soon">SOON</span><span class="tag t-kpi">KPI</span></span>
+            </summary>
+            <div class="box">
+              <ul>
+                <li>勤怠データを取り込み、時給・深夜・残業を自動計算</li>
+                <li>売上と突合して「日次の人件費率」を自動表示</li>
+              </ul>
+            </div>
+          </details>
+        </section>
+
+        <!-- Voice -->
+        <section id="voice" class="card" style="margin-top:14px;">
+          <div class="sectionTitle">
+            <h2>顧客の声（満足度・改善）</h2>
+            <span class="pill">収集→集計→改善</span>
+          </div>
+          <p class="lead">アンケートとスタッフメモを集約し、<strong>改善タスクに自動変換</strong>する。</p>
+
+          <details open>
+            <summary>
+              <span>自動化ピックアップ：アンケート自動集計＋改善タスク化</span>
+              <span class="tags"><span class="tag t-soon">SOON</span><span class="tag t-kpi">KPI</span></span>
+            </summary>
+            <div class="box">
+              <div class="grid2">
+                <div class="callout">
+                  <h3>何を自動化する？</h3>
+                  <ul>
+                    <li>QRアンケート（3問）→自動集計</li>
+                    <li>自由記述をカテゴリ分類（味/接客/雰囲気）</li>
+                    <li>改善案を「タスク」へ自動起票</li>
+                  </ul>
+                </div>
+                <div class="callout">
+                  <h3>どうシステム化する？</h3>
+                  <ul>
+                    <li>Google Form → スプレッドシート</li>
+                    <li>分類：Apps Script or AI分類 → <code>feedback_tags</code></li>
+                    <li>タスク化：Trello/Notion/Sheet（既存タスク管理へ）</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <!-- Promo -->
+        <section id="promo" class="card" style="margin-top:14px;">
+          <div class="sectionTitle">
+            <h2>イベント・プロモ企画（スケジュール化）</h2>
+            <span class="pill">年間→月→週→日</span>
+          </div>
+          <p class="lead">企画を属人化させず、<strong>自動で「今週やること」に落ちる</strong>仕組み。</p>
+
+          <details open>
+            <summary>
+              <span>自動化ピックアップ：年間企画カレンダー→週次ToDo自動生成</span>
+              <span class="tags"><span class="tag t-soon">SOON</span><span class="tag t-kpi">KPI</span></span>
+            </summary>
+            <div class="box">
+              <div class="grid2">
+                <div class="callout">
+                  <h3>何を自動化する？</h3>
+                  <ul>
+                    <li>年間イベント表（季節/祝日）を登録</li>
+                    <li>毎週「今週の企画ToDo」を自動生成</li>
+                    <li>SNS投稿の下書き（テンプレ）を自動生成</li>
+                  </ul>
+                </div>
+                <div class="callout">
+                  <h3>どうシステム化する？</h3>
+                  <ul>
+                    <li>年間計画：<code>promo_calendar</code>（Sheet）</li>
+                    <li>週次バッチ：今週対象を抽出 → <code>weekly_todo</code></li>
+                    <li>テンプレ：投稿文/画像案を生成（AI活用）</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="small">効果測定：投稿→来店/予約の相関を簡易に記録（UTM/予約メモ）</div>
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              <span>SNS運用：投稿計画→投稿素材管理→効果モニタリング</span>
+              <span class="tags"><span class="tag t-later">LATER</span><span class="tag t-kpi">KPI</span></span>
+            </summary>
+            <div class="box">
+              <ul>
+                <li>投稿カレンダー（週次）を自動生成</li>
+                <li>素材フォルダ命名規則を統一（探す時間をゼロへ）</li>
+                <li>数値（保存/リーチ/来店）を毎週自動でサマリー</li>
+              </ul>
+            </div>
+          </details>
+        </section>
+
+        <footer>
+          <div>© The Sake Council Tokyo｜Automation Blueprint</div>
+          <div>Tip：このHTMLは提出用にそのまま印刷→PDF化できます</div>
+        </footer>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
