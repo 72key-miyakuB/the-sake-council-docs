@@ -13,6 +13,7 @@
       --text: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.70);
       --accent:#d7b56d;
+      --accent2:#86d4ff; /* blue (indexと統一) */
       --blue:#86d4ff;
       --green:#7ee3a6;
       --yellow:#ffcf6b;
@@ -236,10 +237,124 @@
       .formula{background:#fafafa; color:#111; border-color:#ddd}
       a{color:#111}
     }
+
+    /* ===== 共通サブヘッダー（戻る＋回遊） ===== */
+    .subHeader{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      background: linear-gradient(
+        180deg,
+        rgba(11,13,18,.85),
+        rgba(11,13,18,.65)
+      );
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+
+    .subHeaderInner{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .subLeft{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 240px;
+    }
+
+    .backLink{
+      font-size: 14px;
+      color: var(--accent2);
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(134,212,255,.35);
+      background: rgba(134,212,255,.10);
+      transition: .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    .backLink:hover{
+      background: rgba(134,212,255,.18);
+      text-decoration: none;
+    }
+
+    .subTitle{
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+
+    .subNav{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .subNav a{
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.86);
+      text-decoration: none;
+      transition: .2s;
+      white-space: nowrap;
+    }
+    .subNav a:hover{
+      border-color: rgba(215,181,109,.26);
+      background: rgba(215,181,109,.10);
+    }
+
+    /* 現在ページの強調（manual/system/digitiz） */
+    .subNav a[aria-current="page"]{
+      border-color: rgba(215,181,109,.32);
+      background: rgba(215,181,109,.14);
+      color: rgba(255,255,255,.92);
+    }
+
+    /* モバイルでタイトルを少し省スペースに */
+    @media (max-width: 720px){
+      .subTitle{ display:none; }
+    }
+
+    /* ヘッダー分だけwrap上部を少し詰める（見栄え調整） */
+    .wrap{ padding-top: 18px; }
+
   </style>
 </head>
 
 <body>
+
+  <!-- 共通ヘッダー（戻る＋回遊） -->
+  <header class="subHeader">
+    <div class="subHeaderInner">
+      <div class="subLeft">
+        <a class="backLink" href="index.html">← 全体図へ戻る</a>
+        <div class="subTitle">The Sake Council Tokyo｜店長業務整理資料</div>
+      </div>
+
+      <nav class="subNav" aria-label="ページ回遊">
+        <a href="manual.html">マニュアル化</a>
+        <a href="system.html">システム化</a>
+        <a href="digitiz.html" aria-current="page">数値化</a>        
+      </nav>
+    </div>
+  </header>
+
   <div class="wrap">
     <header>
       <div>
